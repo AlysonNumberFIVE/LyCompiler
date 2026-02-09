@@ -95,4 +95,140 @@ typedef struct {
     t_token         *token;
 }   t_lexer;
 
+
+
+typedef enum {
+    NODE_PROGRAM,
+    NODE_STRUCT_DECL, 
+    
+    NODE_FUNCTION_DECL,
+    NODE_STRUCT_MEMBER,
+    NODE_PARAM,
+
+    NODE_VAR_DECL, 
+    NODE_RETURN_STMT, 
+    NODE_IF_STMT, 
+    NODE_WHILE_STMT,
+    NODE_BREAK_STMT, 
+    NODE_CONTINUE_STMT, 
+    NODE_EXPR_STMT,
+
+    NODE_BINARY_EXPR,
+    NODE_ASSIGNMENT, 
+    NODE_MEMEBER_ACCESS,
+    NODE_CALL, 
+    NODE_STRUCT_INIT,
+    NODE_STRUCT_FIELD,
+    NODE_TYPE_SPEC;
+
+    NODE_IDENTIFIER,
+    NODE_LITERAL_INT,
+    NODE_LITERAL_CHAR,
+    NODE_LITERAL_STR
+}   node_type;
+
+typedef struct s_node {
+    node_type type;
+    union {
+        struct {
+            char            *name;
+            struct s_node     *members;
+        }   struct_decl; 
+
+        struct {
+            char            *name;
+            struct s_node     *type;
+        }   struct_member;
+
+        struct {
+            char            *name;
+            struct s_node     *params;
+            struct s_node     *return_type;
+            struct s_node     *body;
+        }   func_decl;
+
+        struct {
+            char            *name;
+            struct s_node     *type;
+        }   param;
+
+        struct {
+            char            *name;
+            struct s_node     *type;
+            struct s_node     *initializer;
+        }   var_decl;
+
+        struct {
+            struct s_node *condition;
+            struct s_node *then_branch;
+            struct s_node *else_branch;
+        }   if_stmt;
+
+        struct {
+            struct s_node *condition;
+            struct s_node *body;
+        }   while_stmt;
+
+        struct {
+            struct s_node *expression: // Opional (return ;)
+        }   return_stmt;
+
+        struct {
+            char *name;  // required by C to have at least 1 member.
+        }   continue_stmt;
+
+        struct {
+            struct s_node *expresion;
+        }   expr_stmt;
+
+        struct {
+            struct s_node *left;
+            char *op;
+            struct s_node *right;
+        }   binary_expr;
+
+        struct {
+            struct s_node *target;
+            struct s_node *value;
+        }   assignment;
+
+        struct {
+            struct s_node *callee;
+            struct s_node *args;
+        }   call;
+
+        struct {
+            struct s_node *struct_expr;
+            char        *member_name;
+            bool        is_arrow;
+        }   member_access;
+
+        struct {
+            char            *struct_name;
+            struct s_node     *fields;
+        }   struct_initializer;
+
+        struct {
+            char            *name;
+            struct s_node     *value;
+        }   init_field;
+
+        struct {
+            long int_value;
+            char *str_value;
+            char char_value;
+        }   literal;
+
+        struct {
+            char *name;
+        }   identifier;
+
+        struct {
+            char *base_type;
+            int pointer_level
+        }   type_spec;
+    }   data;
+}   t_node;
+
+
 #endif 
