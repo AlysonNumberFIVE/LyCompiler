@@ -130,11 +130,10 @@ t_node *new_if_stmt(t_node *condition, t_node *then_branch, t_node *else_branch)
 {
     t_node *node;
 
-    node = (t_node *)malloc(sizeof(t_node));
+    node = init_node();
     if (node == NULL)
         return NULL;
 
-    memset(node, 0, sizeof(t_node));
     node->type = NODE_IF_STMT;
     node->data.if_stmt.condition = condition;
     node->data.if_stmt.then_branch = then_branch;
@@ -146,11 +145,10 @@ t_node *new_while_stmt(t_node *condition, t_node *body)
 {
     t_node *node;
 
-    node = (t_node *)malloc(sizeof(t_node));
+    node = init_node();
     if (node == NULL)
         return NULL;
-
-    memset(node, 0, sizeof(t_node));
+    
     node->type = NODE_WHILE_STMT;
     node->while_stmt.condition = condition;
     node->while_stmt.body = body;
@@ -259,7 +257,7 @@ t_node *new_identifier(char *name)
 {
     t_node *node;
 
-    node = (t_node *)malloc(sizeof(t_node));
+    node = init_node();
     if (node == NULL)
         return NULL;
 
