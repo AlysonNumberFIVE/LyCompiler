@@ -12,9 +12,11 @@ SRCS        := main.c \
                utils/utils_file.c \
                utils/utils_token.c \
 			   utils/utils_general.c \
+			   utils/utils_parser.c \
                lexer/read_file.c \
 			   lexer/lexer.c \
-			   lexer/handlers.c 
+			   lexer/handlers.c \
+			   
 
 # Convert source files to object files in the OBJ_DIR
 OBJS        := $(SRCS:%.c=$(OBJ_DIR)/%.o)

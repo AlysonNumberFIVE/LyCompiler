@@ -42,7 +42,7 @@ t_node          *new_continue_stmt(void);
 t_node          *new_if_stmt(t_node *condition, t_node *then_branch, t_node *else_branch);
 t_node          *new_while_stmt(t_node *condition, t_node *body);
 t_node          *new_expr_stmt(t_node *expression);
-t_node          *new_binary_expr(char *left, char *op, char *right);
+t_node          *new_binary_expr(t_node *left, char *op, t_node *right);
 t_node          *new_assignment(t_node *target, t_node *value);
 t_node          *new_member_access(t_node *struct_expr, char *member_name, bool is_arrow);
 t_node          *new_call(t_node *callee, t_node *args);

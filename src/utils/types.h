@@ -131,6 +131,12 @@ typedef struct s_node {
     node_type type;
     union {
         struct {
+            struct s_node   *struct_decl;
+            struct s_node   *var_decl;
+            struct s_node   *function_decl;
+        }   program;
+
+        struct {
             char            *name;
             struct s_node     *members;
         }   struct_decl; 
@@ -170,7 +176,7 @@ typedef struct s_node {
         }   while_stmt;
 
         struct {
-            struct s_node *expression: // Opional (return ;)
+            struct s_node *expression; // Opional (return ;)
         }   return_stmt;
 
         struct {
@@ -178,7 +184,11 @@ typedef struct s_node {
         }   continue_stmt;
 
         struct {
-            struct s_node *expresion;
+            char *name;
+        }   break_stmt;
+
+        struct {
+            struct s_node *expression;
         }   expr_stmt;
 
         struct {
@@ -225,10 +235,16 @@ typedef struct s_node {
 
         struct {
             char *base_type;
-            int pointer_level
+            int pointer_level;
         }   type_spec;
     }   data;
 }   t_node;
+
+typedef struct s_parser {
+    t_token             *tokens;
+    t_error_control     *errors;
+    t_node              *ast;
+}   t_parser;
 
 
 #endif 
