@@ -186,10 +186,10 @@ void scan_token(t_lexer *lx, char *buffer, size_t length)
         case '>': handle_double(lx, buffer, length, '=', TOKEN_OP_GTEQ, ">=", TOKEN_OP_GT, ">"); break;
         case '-': handle_double(lx, buffer, length, '>', TOKEN_OP_ARROW, "->", TOKEN_OP_MINUS, "-"); break;
         case '&': handle_double(lx, buffer, length, '&', TOKEN_OP_AMP, "&&", TOKEN_OP_AND, "&"); break;
-        case '{': push_token(lx, TOKEN_L_PAREN, "{", lx->line, lx->column); break;
-        case '}': push_token(lx, TOKEN_R_PAREN, "}", lx->line, lx->column); break;
-        case '(': push_token(lx, TOKEN_L_BRACE, "(", lx->line, lx->column); break;
-        case ')': push_token(lx, TOKEN_R_BRACE, ")", lx->line, lx->column); break;  
+        case '{': push_token(lx, TOKEN_L_BRACE, "{", lx->line, lx->column); break;
+        case '}': push_token(lx, TOKEN_R_BRACE, "}", lx->line, lx->column); break;
+        case '(': push_token(lx, TOKEN_L_PAREN, "(", lx->line, lx->column); break;
+        case ')': push_token(lx, TOKEN_R_PAREN, ")", lx->line, lx->column); break;  
         case ',': push_token(lx, TOKEN_COMMA, ",", lx->line, lx->column); break;
         case ';': push_token(lx, TOKEN_SEMICOLON, ";", lx->line, lx->column); break;
         case '+': push_token(lx, TOKEN_OP_PLUS, "+", lx->line, lx->column); break;

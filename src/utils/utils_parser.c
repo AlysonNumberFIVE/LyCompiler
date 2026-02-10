@@ -15,6 +15,33 @@ t_node *init_node(void)
     return (node);
 }
 
+
+t_token  *parser_lookahead(t_parser *prs)
+{
+    if (prs && prs->token && prs->token->next) 
+        return prs->token->next;
+    return NULL;
+}
+
+t_token *parser_advance(t_parser *prs) 
+{
+    if (prs && prs->token && prs->token->next)
+    {
+        t_token *token;
+        token = prs->token;
+        prs->token = prs->token->next;
+        return token;
+    }
+    return NULL;
+}
+
+t_token *parser_this(t_parser *prs)
+{
+    if (prs && prs->token)
+        return prs->token;
+    return NULL;
+}
+
 t_node  *init_program(void)
 {
     t_node  *node;
@@ -55,7 +82,7 @@ t_node *new_struct_member(char *name, t_node *type_node)
     return node;
 }
 
-t_node  *new_func_decl(char *name, t_node *params, t_node *return_type, t_node *body)
+t_node  *new_func_decl(char *name, t_node *params, char *return_type, t_node *body)
 {
     t_node *node; 
 
@@ -66,7 +93,7 @@ t_node  *new_func_decl(char *name, t_node *params, t_node *return_type, t_node *
     node->type = NODE_FUNCTION_DECL;
     node->data.func_decl.name = strdup(name);
     node->data.func_decl.params = params;
-    node->data.func_decl.return_type = return_type;
+    node->data.func_decl.return_type = strdup(return_type);
     node->data.func_decl.body = body;
     return node;
 }

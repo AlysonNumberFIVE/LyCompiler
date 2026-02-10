@@ -33,7 +33,7 @@ char            *charpush(char *str, char c);
 
 t_node          *new_struct_decl(char *name, t_node *members);
 t_node          *new_struct_member(char *name, t_node *type_node);
-t_node          *new_func_decl(char *name, t_node *params, t_node *return_type, t_node *body);
+t_node          *new_func_decl(char *name, t_node *params, char *return_type, t_node *body);
 t_node          *new_param(char *name, t_node *type);
 t_node          *new_var_decl(char *name, t_node *type, t_node *initializer);
 t_node          *new_return_stmt(t_node *expression);
@@ -50,5 +50,13 @@ t_node          *new_struct_initializer(char *struct_name, t_node *fields);
 t_node          *new_struct_field(char *name ,t_node *value);
 t_node          *new_identifier(char *name);
 t_node          *new_type_spec(char *base_type, int pointer_level);
+
+t_token         *parser_lookahead(t_parser *prs);
+t_token         *parser_advance(t_parser *prs);
+t_token         *parser_this(t_parser *prs);
+
+
+t_node     *parse_function_decl(t_parser *prs);
+t_node     *parser(t_lexer *lx);
 
 #endif 

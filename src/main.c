@@ -21,8 +21,10 @@ int main(int argc, char **argv)
     }
 
     t_lexer *lex = lex_files(files);
+    
+   //  print_tokens(lex->head);
 
-    print_tokens(lex->head);
+    parser(lex);
 
     return 0;   
 }

@@ -147,9 +147,9 @@ typedef struct s_node {
         }   struct_member;
 
         struct {
-            char            *name;
+            char              *name;
             struct s_node     *params;
-            struct s_node     *return_type;
+            char              *return_type;
             struct s_node     *body;
         }   func_decl;
 
@@ -241,7 +241,7 @@ typedef struct s_node {
 }   t_node;
 
 typedef struct s_parser {
-    t_token             *tokens;
+    t_token             *token;
     t_error_control     *errors;
     t_node              *ast;
 }   t_parser;

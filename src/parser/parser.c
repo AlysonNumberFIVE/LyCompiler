@@ -2,40 +2,113 @@
 #include "types.h"
 #include "utils.h"
 
-// BNF Definition: 
-// <var_decl>               ::= “var” IDENTIFIER  <type> [ “=” <expr> ] “;”
-// <type>                   ::= <type_spec> { “*” }
-// <type_spec>              ::= “i64” 
-//                          | “char” 
-//                          | “struct” IDENTIFIER
-// <expr>                   ::= IDENTIFIER 
-//                          | <literal> 
-// <literal>                ::= CHAR_LITERAL 
-//                          | INT_LITERAL 
-//                          | STRING_LITERAL
 
-
-t_parser    *init_parser(t_token *tokens)
+t_parser    *init_parser(t_token *token)
 {
-    t_parser *psr;
+    t_parser *prs;
 
-    psr = (t_parser *)malloc(sizeof(t_parser));
-    if (parser == NULL)
+    prs = (t_parser *)malloc(sizeof(t_parser));
+    if (prs == NULL)
         return NULL;
 
-    psr->token = tokens;
-    psr->errors = NULL;
-    psr->ast = NULL;
-    return pr;
+    prs->token = token;
+    prs->errors = NULL;
+    prs->ast = NULL;
+    return prs;
 }
 
+bool        is_statement_intro(token_type type)
+{
+    return (type == TOKEN_KW_VAR ||
+        type == TOKEN_KW_RETURN || 
+        type == TOKEN_KW_IF ||
+        type == TOKEN_KW_WHILE);
+}
+
+// <function_decl>   ::= “func” <identifier> “(“ [ <param_list> ] “)”  “->” <type> <“{“ { <statement_list> } “}” 
+t_node     *parse_function_decl(t_parser *prs)
+{
+    t_node  *node;
+    t_node  *params;
+    t_node  *body;
+    t_token *token;
+    char    *name;
+    char    *return_type;
+
+    body = NULL;
+    params = NULL;
+
+    token = parser_advance(prs);
+    if (token && token->type != TOKEN_KW_FUNC)
+        return NULL;
+    
+    token = parser_advance(prs); // move from "func";
+    if (token && token->type != TOKEN_IDENTIFIER) 
+        return NULL;
+
+    name = strdup(token->value);
+
+    token = parser_advance(prs); // move from "func IDENTIFIER"
+    if (token && token->type != TOKEN_L_PAREN)
+        return NULL;
+
+    token = parser_lookahead(prs);
+    if (token && token->type == TOKEN_IDENTIFIER)
+        printf("params = parse_parameter_list()\n");
+        // params = parse_parameter_list()
+
+
+    token = parser_advance(prs);    
+     // func IDENTFIER ( return of parse_parameter_list() )
+    if (token && token->type != TOKEN_R_PAREN) 
+        return NULL;
+    printf("token is %s\n", token->value);
+     // func IDENTFIER ( ... ) ->
+    token = parser_advance(prs);
+    if (token && token->type != TOKEN_OP_ARROW)
+        return NULL;
+
+    // func IDENTIFIER ( ... ) -> DATATYPE 
+    token = parser_advance(prs);
+    if (token && (token->type != TOKEN_TYPE_I64 && token->type != TOKEN_TYPE_CHAR))
+        return NULL;
+
+    return_type = strdup(token->value);
+
+        // func IDENTIFIER ( ... ) -> DATATYPE {  
+    token = parser_advance(prs);
+    if (token && token->type != TOKEN_L_BRACE)
+        return NULL;
+
+    token = parser_advance(prs);
+    if (token && is_statement_intro(token->type))
+        printf("parse_statement()\n");
+        // parse_statement()
+
+    if (token && token->type != TOKEN_R_BRACE) 
+        return NULL; 
+
+    node = new_func_decl(name, params, return_type, body);
+    return node;
+}
 
 t_node     *parser(t_lexer *lx)
 {
-    t_parser    *psr;
+    t_parser    *prs;
+    t_token     *traverse;
 
-    psr = init_parser(lx->tokens);
-    
+    prs = init_parser(lx->head);
+    while (prs->token)
+    {
+        traverse = prs->token;
+        // Global level functions
+        if (traverse->type == TOKEN_KW_FUNC)
+        {
+            parse_function_decl(prs);
+            break;
+        }
+
+    }    
 
     return NULL;
 }
