@@ -29,5 +29,26 @@ void            handle_double(t_lexer *lx,
 t_lexer         *lex_files(t_sourcefile *files); 
 char            *charpush(char *str, char c);
 
+// Parser =====================================================
+
+t_node          *new_struct_decl(char *name, t_node *members);
+t_node          *new_struct_member(char *name, t_node *type_node);
+t_node          *new_func_decl(char *name, t_node *params, t_node *return_type, t_node *body);
+t_node          *new_param(char *name, t_node *type);
+t_node          *new_var_decl(char *name, t_node *type, t_node *initializer);
+t_node          *new_return_stmt(t_node *expression);
+t_node          *new_break_stmt(void);
+t_node          *new_continue_stmt(void);
+t_node          *new_if_stmt(t_node *condition, t_node *then_branch, t_node *else_branch);
+t_node          *new_while_stmt(t_node *condition, t_node *body);
+t_node          *new_expr_stmt(t_node *expression);
+t_node          *new_binary_expr(char *left, char *op, char *right);
+t_node          *new_assignment(t_node *target, t_node *value);
+t_node          *new_member_access(t_node *struct_expr, char *member_name, bool is_arrow);
+t_node          *new_call(t_node *callee, t_node *args);
+t_node          *new_struct_initializer(char *struct_name, t_node *fields);
+t_node          *new_struct_field(char *name ,t_node *value);
+t_node          *new_identifier(char *name);
+t_node          *new_type_spec(char *base_type, int pointer_level);
 
 #endif 
