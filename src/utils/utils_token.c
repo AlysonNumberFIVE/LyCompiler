@@ -2,6 +2,12 @@
 #include "utils.h"
 #include "types.h"
 
+bool                is_primitive(token_type type)
+{
+    return (type == TOKEN_TYPE_I64 || type == TOKEN_TYPE_CHAR);
+}
+
+
 static t_token     *new_token(token_type type, char *value, int line, int column)
 {
     t_token *new_token;

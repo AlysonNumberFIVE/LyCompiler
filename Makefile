@@ -16,7 +16,8 @@ SRCS        := main.c \
                lexer/read_file.c \
 			   lexer/lexer.c \
 			   lexer/handlers.c \
-			   parser/parser.c
+			   parser/parser.c \
+			   parser/parse_parameters.c
 			   
 
 # Convert source files to object files in the OBJ_DIR

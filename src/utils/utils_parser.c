@@ -35,7 +35,7 @@ t_token *parser_advance(t_parser *prs)
     return NULL;
 }
 
-t_token *parser_this(t_parser *prs)
+t_token *parser_peek(t_parser *prs)
 {
     if (prs && prs->token)
         return prs->token;

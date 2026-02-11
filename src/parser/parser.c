@@ -44,7 +44,7 @@ t_node     *parse_function_decl(t_parser *prs)
         return NULL;
     
     // func ID
-    token = parser_advance(prs)
+    token = parser_advance(prs);
     if (token && token->type != TOKEN_IDENTIFIER) 
         return NULL;
 
@@ -59,7 +59,7 @@ t_node     *parse_function_decl(t_parser *prs)
     token = parser_lookahead(prs);
     if (token && token->type == TOKEN_IDENTIFIER)
         printf("params = parse_parameter_list()\n");
-        // params = parse_parameter_list()
+        params = parse_parameter_list(prs);
 
     // func ID ( params ) 
     token = parser_advance(prs);    
@@ -78,7 +78,7 @@ t_node     *parse_function_decl(t_parser *prs)
 
     return_type = strdup(token->value);
 
-        // func IDENTIFIER ( ... ) -> DATATYPE {  
+    // func ID ( params ) -> DATATYPE {
     token = parser_advance(prs);
     if (token && token->type != TOKEN_L_BRACE)
         return NULL;
@@ -86,8 +86,11 @@ t_node     *parse_function_decl(t_parser *prs)
     token = parser_advance(prs);
     if (token && is_statement_intro(token->type))
         printf("parse_statement()\n");
-        // parse_statement()
+        // body = parse_statement()
 
+    // func ID ( params ) -> DATATYPE {
+    //      body
+    // }
     if (token && token->type != TOKEN_R_BRACE) 
         return NULL; 
 
@@ -104,7 +107,7 @@ t_node     *parser(t_lexer *lx)
     while (prs->token)
     {
         traverse = prs->token;
-        // Global level functions
+        // Global level tokens
         if (traverse->type == TOKEN_KW_FUNC)
         {
             parse_function_decl(prs);

@@ -11,11 +11,12 @@
 bool            push_token(t_lexer *lexer, token_type type, char *value, int line, int column);
 void            print_tokens(t_token *head);
 void            free_tokens(t_token *head);
+bool            is_primitive(token_type type);
+
 
 void            print_files(t_sourcefile *files);
 void            free_files(t_sourcefile *files);
 bool            push_file(t_sourcefile **head, char *path, char *buffer, size_t buffer_size);
-
 bool            push_error(t_error_control *error, char *line_message, char *code_block, int line, int column);
 
 t_sourcefile    *parse_cmd(int argc, char **argv);
@@ -53,10 +54,12 @@ t_node          *new_type_spec(char *base_type, int pointer_level);
 
 t_token         *parser_lookahead(t_parser *prs);
 t_token         *parser_advance(t_parser *prs);
-t_token         *parser_this(t_parser *prs);
+t_token         *parser_peek(t_parser *prs);
 
 
 t_node     *parse_function_decl(t_parser *prs);
 t_node     *parser(t_lexer *lx);
+t_node          *parse_parameter_list(t_parser *prs);
+t_token         *parser_advance(t_parser *prs); 
 
 #endif 

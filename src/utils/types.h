@@ -238,6 +238,8 @@ typedef struct s_node {
             int pointer_level;
         }   type_spec;
     }   data;
+
+    struct s_node *next; 
 }   t_node;
 
 typedef struct s_parser {
