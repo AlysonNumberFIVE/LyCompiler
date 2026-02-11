@@ -13,6 +13,11 @@
 //                    | “struct” IDENTIFIER
 
 
+t_node  *parse_type(parser *prs)
+{
+    
+}
+
 t_node  *parse_parameter(parser *prs)
 {
     t_token *token;

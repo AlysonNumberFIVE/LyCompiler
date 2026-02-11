@@ -38,37 +38,40 @@ t_node     *parse_function_decl(t_parser *prs)
     body = NULL;
     params = NULL;
 
+    // func 
     token = parser_advance(prs);
     if (token && token->type != TOKEN_KW_FUNC)
         return NULL;
     
-    token = parser_advance(prs); // move from "func";
+    // func ID
+    token = parser_advance(prs)
     if (token && token->type != TOKEN_IDENTIFIER) 
         return NULL;
 
     name = strdup(token->value);
 
-    token = parser_advance(prs); // move from "func IDENTIFIER"
+    // func ID ( 
+    token = parser_advance(prs); 
     if (token && token->type != TOKEN_L_PAREN)
         return NULL;
 
+    
     token = parser_lookahead(prs);
     if (token && token->type == TOKEN_IDENTIFIER)
         printf("params = parse_parameter_list()\n");
         // params = parse_parameter_list()
 
-
+    // func ID ( params ) 
     token = parser_advance(prs);    
-     // func IDENTFIER ( return of parse_parameter_list() )
     if (token && token->type != TOKEN_R_PAREN) 
         return NULL;
-    printf("token is %s\n", token->value);
-     // func IDENTFIER ( ... ) ->
+
+     // func ID ( params ) ->
     token = parser_advance(prs);
     if (token && token->type != TOKEN_OP_ARROW)
         return NULL;
 
-    // func IDENTIFIER ( ... ) -> DATATYPE 
+    // func ID ( params ) -> DATATYPE
     token = parser_advance(prs);
     if (token && (token->type != TOKEN_TYPE_I64 && token->type != TOKEN_TYPE_CHAR))
         return NULL;
