@@ -322,3 +322,41 @@ t_node *new_type_spec(char *base_type, int pointer_level)
     return node;
 }
 
+t_node  *new_int_literal(long i)
+{
+    t_node  *node;
+
+    node = init_node();
+    if (node == NULL)
+        return NULL;
+
+    node->type = NODE_LITERAL_INT;
+    node->data.int_litera.int_value = i;
+    return node;
+}
+
+t_node  *new_string_literal(char *str)
+{
+    t_node  *node;
+
+    node = init_node();
+    if (node == NULL)
+        return NULL;
+
+    node->type = NODE_LITERAL_STR;
+    node->data.string_literal.str = strdup(str);
+    return node;
+}
+
+t_node  *new_char_literal(char c)
+{
+    t_node  *node;
+
+    node = init_node();
+    if (node == NULL)
+        return NULL; 
+
+    node->type = NODE_LITERAL_CHAR;
+    node->data.char_literal.character = c;
+    return node;
+}

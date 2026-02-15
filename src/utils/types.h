@@ -234,6 +234,18 @@ typedef struct s_node {
         }   literal;
 
         struct {
+            long int_value;
+        }   int_literal;
+
+        struct {
+            char *str;
+        }   string_literal;
+
+        struct {
+            char character;
+        }   char_literal;
+
+        struct {
             char *name;
         }   identifier;
 

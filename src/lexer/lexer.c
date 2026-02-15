@@ -104,7 +104,7 @@ void lexer(t_lexer *lx, char *content, size_t length)
     }
 }
 
-static t_lexer *init_lexer(void)
+t_lexer *init_lexer(void)
 {
     t_lexer *lx = (t_lexer *)malloc(sizeof(t_lexer));
     if (!lx)

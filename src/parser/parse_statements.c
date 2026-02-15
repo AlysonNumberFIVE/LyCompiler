@@ -1,6 +1,7 @@
 
 #include "types.h"
 #include "utils.h"
+#include "parser.h"
 
 // <statement>        ::= <var_decl>
 //                     | <return_stmt>
@@ -25,7 +26,13 @@
 // [ “=” <expr> ] “;”
 t_node  *parse_var_decl_assign(t_parser *prs)
 {
+    t_token *token;
 
+    token = parser_advance(prs);
+    if (token == NULL)
+        return NULL;
+
+    
 }
 
 
@@ -37,6 +44,7 @@ t_node  *parse_var_decl(t_parser *prs)
     char        *name;
     t_node      *type;
 
+    node = NULL;
     token = parser_advance(prs);
     if (!token) 
         return NULL;
@@ -59,22 +67,25 @@ t_node  *parse_var_decl(t_parser *prs)
     if (type == NULL)
         return NULL;
 
-    token = parser_lookahead(prs);
-    if (!token)
+    token = parser_peek(prs);
+    if (token == NULL)
         return NULL;
+    
+    if (token->type == TOKEN_OP_ASSIGN)    
 
-    switch(token->type) 
+    node = new_var_decl(name, type, NULL);
+    if (token->type == TOKEN_SEMICOLON) 
     {
-        case TOKEN_SEMICOLON: 
-        {
-            node = new_var_decl(name, type, NULL);
-            token = parser_advance(prs);
-            printf("token is %s\n", token);
-            break 
-        }
+        token = parser_advance(prs);
+        if (token == NULL)
+            return node;
+    }
+    else 
+    {
+        printf("error\n");
     }
 
-
+    return node;
 }
 
 
@@ -93,12 +104,9 @@ t_node  *parse_statement(t_parser *prs)
     if (token == NULL)
         return (NULL);
 
-    switch(token->type) 
+    if (token->type == TOKEN_KW_VAR) 
     {
-        case TOKEN_KW_VAR: 
-        {
-            parse_var_decl(prs);
-        }
+        parse_var_decl(prs);
     }
-
+    return NULL;
 }

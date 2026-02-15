@@ -8,10 +8,12 @@
 #include <stdlib.h>
 
 
+t_lexer         *init_lexer(void);
 bool            push_token(t_lexer *lexer, token_type type, char *value, int line, int column);
 void            print_tokens(t_token *head);
 void            free_tokens(t_token *head);
 bool            is_primitive(token_type type);
+bool            is_literal(token_type type);
 
 
 void            print_files(t_sourcefile *files);
@@ -52,6 +54,9 @@ t_node          *new_struct_initializer(char *struct_name, t_node *fields);
 t_node          *new_struct_field(char *name ,t_node *value);
 t_node          *new_identifier(char *name);
 t_node          *new_type_spec(char *base_type, int pointer_level);
+t_node          *new_int_literal(long i);
+t_node          *new_string_literal(char *str);
+t_node          *new_char_literal(char c);
 
 t_token         *parser_lookahead(t_parser *prs);
 t_token         *parser_advance(t_parser *prs);

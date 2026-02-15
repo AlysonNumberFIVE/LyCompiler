@@ -1,32 +1,41 @@
-# Name of your final executable
-NAME        := compiler
+NAME         := compiler
+TEST_NAME    := parser_test
 
 # Directories
-SRC_DIR     := src
-OBJ_DIR     := obj
+SRC_DIR      := src
+OBJ_DIR      := obj
 
-# Source files (relative to SRC_DIR)
-# We manually list them to ensure utils_test.c is ignored
-SRCS        := main.c \
-               utils/utils_error.c \
-               utils/utils_file.c \
-               utils/utils_token.c \
-			   utils/utils_general.c \
-			   utils/utils_parser.c \
-               lexer/read_file.c \
-			   lexer/lexer.c \
-			   lexer/handlers.c \
-			   parser/parser.c \
-			   parser/parse_parameters.c \
-			   parser/errors.c
-			   
+# 1. SHARED SOURCES (Everything EXCEPT the files with main())
+SHARED_SRCS  := utils/utils_error.c \
+                utils/utils_file.c \
+                utils/utils_token.c \
+                utils/utils_general.c \
+                utils/utils_parser.c \
+                lexer/read_file.c \
+                lexer/lexer.c \
+                lexer/handlers.c \
+                parser/parser.c \
+                parser/parse_parameters.c \
+				parser/parse_statements.c
+                # parser/errors.c
 
-# Convert source files to object files in the OBJ_DIR
-OBJS        := $(SRCS:%.c=$(OBJ_DIR)/%.o)
+# 2. ENTRY POINTS
+MAIN_SRC     := main.c
+TEST_SRC     := parser/parse_statement_test.c
+
+# 3. COMPOSE FULL SOURCE LISTS
+# For "make all"
+SRCS         := $(MAIN_SRC) $(SHARED_SRCS)
+# For "make parser"
+PARSER_TEST_SRCS := $(TEST_SRC) $(SHARED_SRCS)
+
+# Convert to object files
+OBJS              := $(SRCS:%.c=$(OBJ_DIR)/%.o)
+PARSER_TEST_OBJS  := $(PARSER_TEST_SRCS:%.c=$(OBJ_DIR)/%.o)
 
 # Compiler and Flags
-CC          := gcc
-CFLAGS      := -Wall -Wextra -Werror -Iinc -Isrc/utils -Isrcs/lexer
+CC           := gcc
+CFLAGS       := -Wall -Wextra -Werror -Iinc -Isrc/utils -Isrc/lexer -Isrc/parser
 
 # Build Rules
 all: $(NAME)
@@ -35,7 +44,13 @@ $(NAME): $(OBJS)
 	@$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
 	@echo "Successfully built $(NAME)"
 
-# Rule to compile .c files into .o files
+# This target is totally independent of "make all"
+parser: $(PARSER_TEST_OBJS)
+	@$(CC) $(CFLAGS) $(PARSER_TEST_OBJS) -o $(TEST_NAME)
+	@echo "Successfully built $(TEST_NAME)"
+	@echo "Running Parser Tests..."
+	@./$(TEST_NAME)
+
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -c $< -o $@
@@ -45,9 +60,9 @@ clean:
 	@echo "Object files removed."
 
 fclean: clean
-	@rm -f $(NAME)
-	@echo "Executable removed."
+	@rm -f $(NAME) $(TEST_NAME)
+	@echo "Executables removed."
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re parser
