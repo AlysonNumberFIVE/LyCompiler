@@ -68,13 +68,12 @@ t_node  *parse_var_decl(t_parser *prs)
         case TOKEN_SEMICOLON: 
         {
             node = new_var_decl(name, type, NULL);
+            token = parser_advance(prs);
+            printf("token is %s\n", token);
             break 
         }
-        case TOKEN_OP_ASSIGN: 
-        {
-
-        }
     }
+
 
 }
 
@@ -94,9 +93,12 @@ t_node  *parse_statement(t_parser *prs)
     if (token == NULL)
         return (NULL);
 
-    switch(token->type) {
+    switch(token->type) 
+    {
         case TOKEN_KW_VAR: 
-
+        {
+            parse_var_decl(prs);
+        }
     }
 
 }

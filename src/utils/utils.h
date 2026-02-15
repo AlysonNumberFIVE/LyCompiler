@@ -58,13 +58,16 @@ t_token         *parser_advance(t_parser *prs);
 t_token         *parser_peek(t_parser *prs);
 
 
-t_node     *parse_function_decl(t_parser *prs);
-t_node     *parser(t_lexer *lx);
+t_node          *parse_function_decl(t_parser *prs);
+t_node          *parser(t_lexer *lx);
 t_node          *parse_parameter_list(t_parser *prs);
 t_token         *parser_advance(t_parser *prs); 
 
 
+
 // error recovery ==============
 void        traverse_to_recovery_token(t_parser *prs);
+
+
 
 #endif 
