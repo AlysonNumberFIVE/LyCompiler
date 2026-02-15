@@ -32,6 +32,7 @@ char            *charpush(char *str, char c);
 
 // Parser =====================================================
 
+t_node           *init_node(void);
 t_node          *new_struct_decl(char *name, t_node *members);
 t_node          *new_struct_member(char *name, t_node *type_node);
 t_node          *new_func_decl(char *name, t_node *params, char *return_type, t_node *body);
@@ -61,5 +62,9 @@ t_node     *parse_function_decl(t_parser *prs);
 t_node     *parser(t_lexer *lx);
 t_node          *parse_parameter_list(t_parser *prs);
 t_token         *parser_advance(t_parser *prs); 
+
+
+// error recovery ==============
+void        traverse_to_recovery_token(t_parser *prs);
 
 #endif 

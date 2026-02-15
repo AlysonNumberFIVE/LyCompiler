@@ -54,6 +54,7 @@ t_node  *init_program(void)
     return node;
 }
 
+
 t_node  *new_struct_decl(char *name, t_node *members) 
 {
     t_node *node;
@@ -320,3 +321,4 @@ t_node *new_type_spec(char *base_type, int pointer_level)
     node->data.type_spec.pointer_level = pointer_level;
     return node;
 }
+

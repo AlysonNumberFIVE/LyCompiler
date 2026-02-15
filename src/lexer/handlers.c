@@ -190,6 +190,8 @@ void scan_token(t_lexer *lx, char *buffer, size_t length)
         case '}': push_token(lx, TOKEN_R_BRACE, "}", lx->line, lx->column); break;
         case '(': push_token(lx, TOKEN_L_PAREN, "(", lx->line, lx->column); break;
         case ')': push_token(lx, TOKEN_R_PAREN, ")", lx->line, lx->column); break;  
+        case '[': push_token(lx, TOKEN_L_BLOCK, "[", lx->line, lx->column); break;
+        case ']': push_token(lx, TOKEN_R_BLOCK, "]", lx->line, lx->column); break;
         case ',': push_token(lx, TOKEN_COMMA, ",", lx->line, lx->column); break;
         case ';': push_token(lx, TOKEN_SEMICOLON, ";", lx->line, lx->column); break;
         case '+': push_token(lx, TOKEN_OP_PLUS, "+", lx->line, lx->column); break;

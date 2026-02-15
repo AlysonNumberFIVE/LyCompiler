@@ -58,8 +58,11 @@ t_node     *parse_function_decl(t_parser *prs)
     
     token = parser_lookahead(prs);
     if (token && token->type == TOKEN_IDENTIFIER)
-        printf("params = parse_parameter_list()\n");
+    {
         params = parse_parameter_list(prs);
+        if (params == NULL)
+            return NULL;
+    }
 
     // func ID ( params ) 
     token = parser_advance(prs);    
@@ -101,6 +104,7 @@ t_node     *parse_function_decl(t_parser *prs)
 t_node     *parser(t_lexer *lx)
 {
     t_parser    *prs;
+    t_node      *node;
     t_token     *traverse;
 
     prs = init_parser(lx->head);
@@ -110,7 +114,9 @@ t_node     *parser(t_lexer *lx)
         // Global level tokens
         if (traverse->type == TOKEN_KW_FUNC)
         {
-            parse_function_decl(prs);
+            node = parse_function_decl(prs);
+            if (node == NULL)
+                printf("error");
             break;
         }
 

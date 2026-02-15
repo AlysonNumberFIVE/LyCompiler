@@ -40,6 +40,9 @@ typedef enum {
     TOKEN_R_PAREN,
     TOKEN_L_BRACE,
     TOKEN_R_BRACE,
+    TOKEN_L_BLOCK,
+    TOKEN_R_BLOCK,
+    
     TOKEN_COMMA,
     TOKEN_SEMICOLON,
     TOKEN_COLON,
@@ -122,6 +125,7 @@ typedef enum {
     NODE_TYPE_SPEC,
 
     NODE_IDENTIFIER,
+    NODE_LITERAL_ARRAY,
     NODE_LITERAL_INT,
     NODE_LITERAL_CHAR,
     NODE_LITERAL_STR
@@ -232,6 +236,10 @@ typedef struct s_node {
         struct {
             char *name;
         }   identifier;
+
+        struct {
+            struct s_node *item;
+        }   array_stmt;
 
         struct {
             char *base_type;

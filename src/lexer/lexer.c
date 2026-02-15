@@ -57,42 +57,32 @@ void skip_whitespace(t_lexer *lx, char *buffer, size_t length)
 
 void skip_comments(t_lexer *lx, char *buffer, size_t length)
 {
-    // We need to see two characters to know if it's a comment
     if (peek(lx, buffer, length) != '/')
         return;
 
-    // Check for // (Single Line)
     if (peek_next(lx, buffer, length) == '/')
     {
-        // Consume both '/' characters
         advance(lx, buffer, length);
         advance(lx, buffer, length);
-        
-        // Skip until newline or EOF
         while (peek(lx, buffer, length) != '\0' && peek(lx, buffer, length) != '\n')
-        {
             advance(lx, buffer, length);
-        }
     }
-    // Check for /* (Multi-line)
+
     else if (peek_next(lx, buffer, length) == '*')
     {
-        // Consume '/' and '*'
         advance(lx, buffer, length);
         advance(lx, buffer, length);
 
         while (peek(lx, buffer, length) != '\0')
         {
-            // Look for the closing */
             if (peek(lx, buffer, length) == '*' && peek_next(lx, buffer, length) == '/')
             {
-                advance(lx, buffer, length); // eat '*'
-                advance(lx, buffer, length); // eat '/'
+                advance(lx, buffer, length); 
+                advance(lx, buffer, length); 
                 return;
             }
             advance(lx, buffer, length);
         }
-        // If we reach here, you have an unclosed comment error!
     }
 }
 
@@ -148,7 +138,7 @@ t_lexer *lex_files(t_sourcefile *files)
 
         free(lx->file_path);
     }
-
+    lx->tail->next = NULL;
     return lx;
 }
 
