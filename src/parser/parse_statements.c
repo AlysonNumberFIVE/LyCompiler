@@ -32,7 +32,7 @@ t_node  *parse_var_decl_assign(t_parser *prs)
     if (token == NULL)
         return NULL;
 
-    
+    return NULL;
 }
 
 

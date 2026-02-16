@@ -16,7 +16,8 @@ SHARED_SRCS  := utils/utils_error.c \
                 lexer/handlers.c \
                 parser/parser.c \
                 parser/parse_parameters.c \
-				parser/parse_statements.c
+				parser/parse_statements.c \
+				parser/parse_expression.c 
                 # parser/errors.c
 
 # 2. ENTRY POINTS

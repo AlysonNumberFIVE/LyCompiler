@@ -331,7 +331,7 @@ t_node  *new_int_literal(long i)
         return NULL;
 
     node->type = NODE_LITERAL_INT;
-    node->data.int_litera.int_value = i;
+    node->data.int_literal.int_value = i;
     return node;
 }
 

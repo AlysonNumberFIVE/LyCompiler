@@ -48,7 +48,9 @@ void    push_identifier(t_lexer *lx, char *token)
     else if (strcmp(token, "i64") == 0)
         push_token(lx, TOKEN_TYPE_I64, token, lx->line, lx->column);
     else if (strcmp(token, "char") == 0)
-        push_token(lx, TOKEN_TYPE_CHAR, token, lx->line, lx->column);   
+        push_token(lx, TOKEN_TYPE_CHAR, token, lx->line, lx->column);
+    else if (strcmp(token, "is") == 0)
+        push_token(lx, TOKEN_KW_IF, token, lx->line, lx->column);   
     else
         push_token(lx, TOKEN_IDENTIFIER, token, lx->line, lx->column);
 }
