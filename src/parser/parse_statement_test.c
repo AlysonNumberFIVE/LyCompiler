@@ -21,11 +21,18 @@ t_lexer *create_valid_expression(void)
 
     lexer = init_lexer();
     push_token(lexer, TOKEN_OP_ASSIGN, "=", 0, 0);
-    push_token(lexer, TOKEN_INT_LITERAL, "42", 0, 0); 
-    push_token(lexer, TOKEN_OP_STAR, "+", 0, 0);
-    push_token(lexer, TOKEN_INT_LITERAL, "11", 0, 0);
-    push_token(lexer, TOKEN_OP_PLUS, "*", 0, 0); 
-    push_token(lexer, TOKEN_INT_LITERAL, "121", 0, 0);
+    push_token(lexer, TOKEN_INT_LITERAL, "42", 1, 0); 
+    push_token(lexer, TOKEN_OP_PLUS, "+", 2, 0);
+    push_token(lexer, TOKEN_INT_LITERAL, "11", 3, 0);
+    push_token(lexer, TOKEN_OP_STAR, "*", 4, 0); 
+    push_token(lexer, TOKEN_INT_LITERAL, "121", 5, 0);
+    push_token(lexer, TOKEN_OP_STAR, "*", 6, 0); 
+    // push_token(lexer, TOKEN_L_PAREN, "(", 7, 0);
+    push_token(lexer, TOKEN_INT_LITERAL, "4444", 0 ,0);
+     push_token(lexer, TOKEN_OP_STAR, "*", 0, 0);
+     push_token(lexer, TOKEN_INT_LITERAL, "1231", 0, 0);
+    // push_token(lexer, TOKEN_R_PAREN, ")", 0, 0);
+    
     push_token(lexer, TOKEN_SEMICOLON, ";", 0, 0); 
     return lexer;
 }

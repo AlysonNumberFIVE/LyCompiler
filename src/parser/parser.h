@@ -11,5 +11,7 @@ t_parser    *init_parser(t_token *token);
 
 t_node      *parse_assignment(t_parser *parser);
 
+void        print_ast(t_node *node, int depth);
+
 #endif 
 

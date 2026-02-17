@@ -4,8 +4,29 @@
 #include "utils.h"
 #include "parser.h"
 #include <errno.h>
+#include <unistd.h>
 
-// <literal>                 ::= CHAR_LITERAL | INT_LITERAL | STRING_LITERAL
+#include <stdio.h>
+
+// BNF Definition
+// <expression>            ::= <assignment>
+// <assignment>            ::= <logical_or>
+//                         | IDENTIFIER "=" <assignment>
+
+// <logical_or>            ::= <logical_and> { "||" <logical_and> }
+// <logical_and>           ::= <equality>    { "&&" <equality> }
+// <equality>              ::= <additive>    { ("==" | "!=") <additive> }
+// <additive>              ::= <multiplicative> { ("+" | "-") <multiplicative> }
+// <multiplicative>        ::= <primary> { ( “*” | “/” ) <primary>  } 
+// <primary>               ::= IDENTIFIER 
+//                         | <literal>
+//                         | “(“ <expression> “)”  
+//                         | <struct_initializer>      
+// <literal>               ::= CHAR_LITERAL | INT_LITERAL | STRING_LITERAL
+
+t_node  *parse_logical_or(t_parser *prs);
+
+// <literal>               ::= CHAR_LITERAL | INT_LITERAL | STRING_LITERAL
 t_node  *parse_literal(t_parser *prs)
 {
     t_token     *token;
@@ -31,13 +52,23 @@ t_node  *parse_literal(t_parser *prs)
     }
     else if (token->type == TOKEN_STRING_LITERAL)
         node = new_string_literal(token->value);
-    
     else if (token->type == TOKEN_CHAR_LITERAL)
     {
         if (strlen(token->value) != 1)
             return NULL;
         node = new_char_literal(token->value[0]);
     } 
+    else if (token->type == TOKEN_L_PAREN) 
+    {
+        printf("inside (\n");
+        node = parse_assignment(prs);  
+        if (node == NULL)
+            return NULL;
+
+        token = parser_peek(prs);
+        if (token)
+           printf("after recursion, we are at %s\n", token->value);
+    }
     else 
         return NULL;
 
@@ -53,12 +84,12 @@ t_node  *parse_primary(t_parser *prs)
     t_token  *token;
     t_node *left;
  //   t_node *right;   
-
+    printf("parser primary  at the start is %s\n", parser_peek(prs)->value);
     token = parser_peek(prs);
     if (token == NULL)
         return NULL;
 
-    printf("token is %s\n", token->value);
+    printf("parse primary is %s\n", token->value);
     if (is_literal(token->type) == true)
         left = parse_literal(prs);
     else if (token->type == TOKEN_IDENTIFIER)
@@ -66,125 +97,200 @@ t_node  *parse_primary(t_parser *prs)
     else 
         return NULL;
     
+    printf("primary return %s : %d\n", token->value,token->line );
     return left;
 }
 
 // <multiplicative>       ::= <primary> { ( “*” | “/” ) <primary>  } 
 t_node *parse_multiplicative(t_parser *prs)
 {
-    t_token  *token;
-    t_node *left;
-    t_node *right;
-    t_node *binary_exp;
-    char *op;
+    t_token     *token;
+    t_node      *left;
+    t_node      *right;
+    char        *op;
 
     left = parse_primary(prs);
     if (left == NULL)
         return NULL;
-
-    token = parser_advance(prs);
-    if (token == NULL)
-        return NULL;
     
-    if (token->type != TOKEN_OP_STAR && token->type != TOKEN_OP_SLASH) 
-        return left;
+    while (42) 
+    {
+        token = parser_peek(prs);     
+        if (token == NULL || (token->type != TOKEN_OP_STAR && token->type != TOKEN_OP_SLASH))
+            break ;
 
-    op = strdup(token->value);
-    if (op == NULL)
-        return NULL;
+        token = parser_advance(prs);
+        if (token == NULL)
+            break;
     
-    right = parse_primary(prs);
-    if (right == NULL)
-        return left;
+        op = strdup(token->value);
+        if (op == NULL)
+            return NULL;
+        
+        right = parse_primary(prs);
+        if (right == NULL)
+            return left; 
 
-    binary_exp = new_binary_expr(left, op, right);
-    if (binary_exp == NULL)
-        return NULL;
+        left = new_binary_expr(left, op, right);
+    }
 
-    return binary_exp;
+    return left;
 }
 
+// <additive>              ::= <multiplicative> { ("+" | "-") <multiplicative> }
 t_node *parse_additive(t_parser *prs)
 {
-    t_token  *token;
-    t_node *left;
-    t_node *right;
-    t_node *binary_exp;
-    char *op;
+    t_token     *token;
+    t_node      *left;
+    t_node      *right;
+    char        *op;
 
     left = parse_multiplicative(prs);
     if (left == NULL)
         return NULL;
 
-    token = parser_advance(prs);
-    if (token == NULL)
-        return NULL;
-    
-    if (token->type != TOKEN_OP_PLUS && token->type != TOKEN_OP_MINUS) 
-        return left;
+    while (42) 
+    {
+        token = parser_peek(prs);     
+        if (token == NULL || (token->type != TOKEN_OP_PLUS && token->type != TOKEN_OP_MINUS))
+            break ;
 
-    op = strdup(token->value);
-    if (op == NULL)
-        return NULL;
+        token = parser_advance(prs);
+         if (token == NULL)
+            break;
 
-    right = parse_multiplicative(prs);
-    if (right == NULL)
-        return NULL;
+        op = strdup(token->value);
+        if (op == NULL)
+            return NULL;
 
-    binary_exp = new_binary_expr(left, op, right);
-    if (binary_exp == NULL)
-        return NULL;
+        right = parse_multiplicative(prs);
+        if (right == NULL)
+            return left; 
 
-    printf("end");
+        left = new_binary_expr(left, op, right);
+    }
 
+    printf("binary_expr: \n");
+    print_ast(left  , 1);
+    printf("======================\n");
     return left;
 }
 
-
-
+// <equality>              ::= <additive>    { ("==" | "!=") <additive> }
 t_node  *parse_equality(t_parser *prs)
 {
-  //  t_node *token;
-    t_node *left;
-  //  t_node *right;  
+    t_token     *token;
+    t_node      *left;
+    t_node      *right;
+    char        *op;
 
     left = parse_additive(prs);
+    if (left == NULL)
+        return NULL;
+
+    while (42) 
+    {
+        token = parser_peek(prs);     
+        if (token == NULL || (token->type != TOKEN_OP_EQ && token->type != TOKEN_OP_NEQ))
+            break ;
+
+        token = parser_advance(prs);
+        if (token == NULL)
+            break;
+
+        op = strdup(token->value);
+        if (op == NULL)
+            return NULL;
+
+        right = parse_additive(prs);
+        if (right == NULL)
+            return left; 
+
+        left = new_binary_expr(left, op, right);
+    } 
 
     return left;
 }
 
+// <logical_and>        ::= <equality> { "&&" <equality> }
 t_node  *parse_logical_and(t_parser *prs)
 {
-  //  t_node *token;
-    t_node *left;
-  //  t_node *right; 
+    t_token     *token;
+    t_node      *left;
+    t_node      *right;
+    char        *op;
 
-     left = parse_equality(prs);
+    left = parse_equality(prs);
 
+    while (42) 
+    {
+        token = parser_peek(prs);     
+        if (token == NULL || token->type != TOKEN_OP_AND)
+            break ;
+
+        token = parser_advance(prs);
+        if (token == NULL)
+            break;
+
+        op = strdup(token->value);
+        if (op == NULL)
+            return NULL;
+
+        right = parse_equality(prs);
+        if (right == NULL)
+            return left; 
+
+        left = new_binary_expr(left, op, right);
+    } 
+    
     return left;
 }
 
-
+// <logical_or>            ::= <logical_and> { "||" <logical_and> }
 t_node  *parse_logical_or(t_parser *prs) 
 {
-  //  t_node *token;
-    t_node *left;
-  //  t_node *right;
+    t_token     *token;
+    t_node      *left;
+    t_node      *right;
+    char        *op;
 
     left = parse_logical_and(prs);
 
+    while (42) 
+    {
+        token = parser_peek(prs);     
+        if (token == NULL || token->type != TOKEN_OP_AND)
+            break ;
+
+        token = parser_advance(prs);
+        if (token == NULL)
+            break;
+
+        op = strdup(token->value);
+        if (op == NULL)
+            return NULL;
+
+        right = parse_logical_and(prs);
+        if (right == NULL)
+            return left; 
+
+        left = new_binary_expr(left, op, right);
+    } 
+    
     return left;
 }
 
+
+// <assignment>            ::= <logical_or>
 t_node  *parse_assignment(t_parser *prs)
 {
     t_token *token;
+    t_node *node;
 
     token = parser_advance(prs);
     if (token == NULL)
         return NULL;
     
-    parse_logical_or(prs);
-
-    return NULL;
+    node = parse_logical_or(prs);
+    return node;
 }
