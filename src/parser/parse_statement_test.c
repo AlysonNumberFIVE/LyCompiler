@@ -29,10 +29,11 @@ t_lexer *create_valid_expression(void)
     push_token(lexer, TOKEN_OP_STAR, "*", 6, 0); 
     // push_token(lexer, TOKEN_L_PAREN, "(", 7, 0);
     push_token(lexer, TOKEN_INT_LITERAL, "4444", 0 ,0);
-     push_token(lexer, TOKEN_OP_STAR, "*", 0, 0);
-     push_token(lexer, TOKEN_INT_LITERAL, "1231", 0, 0);
+    push_token(lexer, TOKEN_OP_STAR, "*", 0, 0);
+    push_token(lexer, TOKEN_INT_LITERAL, "1231", 0, 0);
+    push_token(lexer, TOKEN_OP_MINUS, "-", 0, 0); 
     // push_token(lexer, TOKEN_R_PAREN, ")", 0, 0);
-    
+    push_token(lexer, TOKEN_INT_LITERAL, "10", 0, 0);
     push_token(lexer, TOKEN_SEMICOLON, ";", 0, 0); 
     return lexer;
 }

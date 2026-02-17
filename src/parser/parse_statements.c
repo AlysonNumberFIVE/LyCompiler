@@ -71,7 +71,7 @@ t_node  *parse_var_decl(t_parser *prs)
     if (token == NULL)
         return NULL;
     
-    if (token->type == TOKEN_OP_ASSIGN)    
+  //  if (token->type == TOKEN_OP_ASSIGN)    
 
     node = new_var_decl(name, type, NULL);
     if (token->type == TOKEN_SEMICOLON) 
@@ -99,14 +99,19 @@ t_node  *parse_var_decl(t_parser *prs)
 t_node  *parse_statement(t_parser *prs)
 {
     t_token *token;
+    t_node *node;
 
+    node = NULL;
     token = parser_peek(prs);
     if (token == NULL)
         return (NULL);
 
     if (token->type == TOKEN_KW_VAR) 
     {
-        parse_var_decl(prs);
+        node = parse_var_decl(prs);
+        if (node != NULL)
+            print_ast(node, 1);
     }
-    return NULL;
+
+    return node;
 }

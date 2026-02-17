@@ -2,6 +2,7 @@
 
 #include "types.h"
 #include "utils.h"
+#include "parser.h"
 
 
 // BNF Definition:
@@ -64,7 +65,6 @@ t_node  *parse_type(t_parser *prs)
     return node;
 }
 
-
 // <param>            ::= IDENTIFIER <type>
 t_node  *parse_parameter(t_parser *prs)
 {
@@ -93,7 +93,6 @@ t_node  *parse_parameter(t_parser *prs)
     // <param>            ::= IDENTIFIER <type>
     return parameter;
 }
-
 
 // <param_list>       ::= <param> { “,” <param> } 
 t_node  *parse_parameter_list(t_parser *prs)
@@ -126,16 +125,6 @@ t_node  *parse_parameter_list(t_parser *prs)
         }
     }
 
-    node_next = parameter;
-    while (node_next)
-    {
-        printf("name:       %s\n", node_next->data.param.name);
-        printf("type:       %s\n", node_next->data.param.type->data.type_spec.base_type);
-        printf("ptr_level:  %d\n", node_next->data.param.type->data.type_spec.pointer_level);
-        printf("=================\n");
-
-        node_next = node_next->next;
-    }
-  
+    print_ast(parameter, 1);
     return parameter;
 }

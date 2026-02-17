@@ -83,13 +83,10 @@ t_node  *parse_primary(t_parser *prs)
 {
     t_token  *token;
     t_node *left;
- //   t_node *right;   
-    printf("parser primary  at the start is %s\n", parser_peek(prs)->value);
     token = parser_peek(prs);
     if (token == NULL)
         return NULL;
 
-    printf("parse primary is %s\n", token->value);
     if (is_literal(token->type) == true)
         left = parse_literal(prs);
     else if (token->type == TOKEN_IDENTIFIER)
@@ -97,7 +94,6 @@ t_node  *parse_primary(t_parser *prs)
     else 
         return NULL;
     
-    printf("primary return %s : %d\n", token->value,token->line );
     return left;
 }
 
@@ -170,9 +166,6 @@ t_node *parse_additive(t_parser *prs)
         left = new_binary_expr(left, op, right);
     }
 
-    printf("binary_expr: \n");
-    print_ast(left  , 1);
-    printf("======================\n");
     return left;
 }
 
@@ -284,13 +277,16 @@ t_node  *parse_logical_or(t_parser *prs)
 // <assignment>            ::= <logical_or>
 t_node  *parse_assignment(t_parser *prs)
 {
-    t_token *token;
-    t_node *node;
+    t_token     *token;
+    t_node      *node;
 
     token = parser_advance(prs);
     if (token == NULL)
         return NULL;
     
     node = parse_logical_or(prs);
+    printf("binary_expr: \n");
+    print_ast(node  , 1);
+    printf("======================\n");
     return node;
 }
