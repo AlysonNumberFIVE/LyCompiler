@@ -18,6 +18,7 @@
 // <equality>              ::= <additive>    { ("==" | "!=") <additive> }
 // <additive>              ::= <multiplicative> { ("+" | "-") <multiplicative> }
 // <multiplicative>        ::= <primary> { ( “*” | “/” ) <primary>  } 
+// <postfix>               ::= <primary> { "->" IDENTIFIER | "." IDENTIFIER | "[" <expression> "]" }
 // <primary>               ::= IDENTIFIER 
 //                         | <literal>
 //                         | “(“ <expression> “)”  
@@ -90,11 +91,68 @@ t_node  *parse_primary(t_parser *prs)
     if (is_literal(token->type) == true)
         left = parse_literal(prs);
     else if (token->type == TOKEN_IDENTIFIER)
+    {
         left = new_identifier(token->value);
+        token = parser_advance(prs);
+        if (token == NULL)
+            return NULL;
+    }
     else 
         return NULL;
     
     return left;
+}
+
+t_node *parse_postfix(t_parser *prs)
+{
+    t_node      *node;
+    t_token     *token;
+    bool        is_arrow;
+    char        *name;
+
+    node = parse_primary(prs);
+    if (node == NULL)
+        return NULL;
+    
+    while (42)
+    {
+        token = parser_peek(prs);
+        if (token == NULL)
+            break ;
+        
+        if (token->type == TOKEN_OP_ARROW || token->type == TOKEN_OP_DOT)
+        {
+            is_arrow = (token->type == TOKEN_OP_ARROW);
+            token = parser_advance(prs);
+            if (token == NULL)
+                break ;
+
+            token = parser_advance(prs);
+            if (token == NULL)
+                break ;
+        
+            name = strdup(token->value);
+            if (name == NULL)
+                return NULL;    
+
+            node = new_member_access(node, name, is_arrow);
+        }
+        else if (token->type == TOKEN_L_BLOCK)
+        {
+            t_node *index = parse_assignment(prs); // Expressions are allowed in []
+            
+            if (parser_peek(prs) && parser_peek(prs)->type == TOKEN_R_BLOCK)
+                parser_advance(prs); // Consume ']'
+
+            node = new_array_access(node, index);
+        }
+        else 
+        {
+            break ;
+        }
+    }
+
+    return node;
 }
 
 // <multiplicative>       ::= <primary> { ( “*” | “/” ) <primary>  } 
@@ -105,7 +163,7 @@ t_node *parse_multiplicative(t_parser *prs)
     t_node      *right;
     char        *op;
 
-    left = parse_primary(prs);
+    left = parse_postfix(prs);
     if (left == NULL)
         return NULL;
     
@@ -123,7 +181,7 @@ t_node *parse_multiplicative(t_parser *prs)
         if (op == NULL)
             return NULL;
         
-        right = parse_primary(prs);
+        right = parse_postfix(prs);
         if (right == NULL)
             return left; 
 

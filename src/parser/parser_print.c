@@ -68,7 +68,33 @@ void print_ast(t_node *node, int depth) {
             print_ast(node->data.func_decl.body, depth + 1);
             break;
 
-        // Add more cases here as you implement them...
+        case NODE_ARRAY_ACCESS:
+            printf("ARRAY_ACCESS\n");
+            // Print the array base
+            for (int i = 0; i < depth + 1; i++) printf("  │ ");
+            printf("  ├── Base:\n");
+            print_ast(node->data.array_access.array, depth + 2);
+
+            // Print the index expression
+            for (int i = 0; i < depth + 1; i++) printf("  │ ");
+            printf("  ├── Index:\n");
+            print_ast(node->data.array_access.index, depth + 2);
+            break;
+            // Add more cases here as you implement them...
+
+        case NODE_MEMEBER_ACCESS:
+            // 1. Print the type of access
+            printf("MEMBER_ACCESS (%s)\n", node->data.member_access.is_arrow ? "->" : ".");
+
+            // 2. Print the struct/pointer (The "Left" side)
+            for (int i = 0; i < depth; i++) printf("  │ ");
+            printf("  ├── Struct:\n");
+            print_ast(node->data.member_access.struct_expr, depth + 2);
+
+            // 3. Print the member name (The "Right" side)
+            for (int i = 0; i < depth; i++) printf("  │ ");
+            printf("  └── Member: %s\n", node->data.member_access.member_name);
+            break;
         default:
             printf("UNKNOWN_NODE_TYPE (%d)\n", node->type);
             break;

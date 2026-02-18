@@ -360,3 +360,17 @@ t_node  *new_char_literal(char c)
     node->data.char_literal.character = c;
     return node;
 }
+
+t_node *new_array_access(t_node *array, t_node *index)
+{
+    t_node *node;
+
+    node = init_node(); // Using your initializer
+    if (node == NULL)
+        return NULL;
+
+    node->type = NODE_ARRAY_ACCESS;
+    node->data.array_access.array = array;
+    node->data.array_access.index = index;
+    return node;
+}

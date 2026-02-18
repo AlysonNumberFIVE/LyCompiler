@@ -120,6 +120,7 @@ typedef enum {
     NODE_ASSIGNMENT, 
     NODE_MEMEBER_ACCESS,
     NODE_CALL, 
+    NODE_ARRAY_ACCESS,
     NODE_STRUCT_INIT,
     NODE_STRUCT_FIELD,
     NODE_TYPE_SPEC,
@@ -257,6 +258,11 @@ typedef struct s_node {
             char *base_type;
             int pointer_level;
         }   type_spec;
+
+        struct {
+            struct s_node *array; 
+            struct s_node *index;
+        } array_access;
     }   data;
 
     struct s_node *next; 
