@@ -57,6 +57,32 @@ t_lexer *create_valid_expression_with_struct_access(void)
     return lexer;
 }
 
+t_lexer *create_valid_expression_with_array_access(void)
+{
+    t_lexer *lexer;
+
+    
+    // 42 + 11 * value->againx[42]->second * X;
+    lexer = init_lexer();
+    push_token(lexer, TOKEN_OP_ASSIGN, "=", 0, 0);
+    push_token(lexer, TOKEN_INT_LITERAL, "42", 1, 0); 
+    push_token(lexer, TOKEN_OP_PLUS, "+", 2, 0);
+    push_token(lexer, TOKEN_INT_LITERAL, "11", 3, 0);
+    push_token(lexer, TOKEN_OP_STAR, "*", 4, 0); 
+    push_token(lexer, TOKEN_IDENTIFIER, "value", 5, 0);
+    push_token(lexer, TOKEN_OP_ARROW, "->", 0, 0);
+    push_token(lexer, TOKEN_IDENTIFIER, "againx", 0, 0);
+    push_token(lexer, TOKEN_L_BLOCK, "[", 0, 0); 
+    push_token(lexer, TOKEN_INT_LITERAL, "42", 0, 0); 
+    push_token(lexer, TOKEN_R_BLOCK, "]", 0, 0); 
+    push_token(lexer, TOKEN_OP_ARROW, "->", 0, 0);
+    push_token(lexer, TOKEN_IDENTIFIER, "second", 0, 0);
+    push_token(lexer, TOKEN_OP_STAR, "*", 2, 0);
+    push_token(lexer, TOKEN_IDENTIFIER, "X", 3, 0);
+    push_token(lexer, TOKEN_SEMICOLON, ";", 0, 0); 
+    return lexer;
+}
+
 int main(void)
 {
     t_lexer *lexer;
@@ -99,6 +125,17 @@ int main(void)
     else 
         printf("token value after parse_assignment : %s\n", token->value);
 
+
+    lexer = create_valid_expression_with_array_access();
+
+    parser = init_parser(lexer->head);
+    parse_assignment(parser);
+
+    token = parser_peek(parser);
+    if (!token)
+        printf("parse_assignment:token empty");
+    else 
+        printf("token value after parse_assignment : %s\n", token->value);
 
     return 0;
 }

@@ -106,6 +106,7 @@ t_node  *parse_primary(t_parser *prs)
 t_node *parse_postfix(t_parser *prs)
 {
     t_node      *node;
+    t_node      *index;
     t_token     *token;
     bool        is_arrow;
     char        *name;
@@ -139,11 +140,11 @@ t_node *parse_postfix(t_parser *prs)
         }
         else if (token->type == TOKEN_L_BLOCK)
         {
-            t_node *index = parse_assignment(prs); // Expressions are allowed in []
+            index = parse_assignment(prs); // Expressions are allowed in []
             
             if (parser_peek(prs) && parser_peek(prs)->type == TOKEN_R_BLOCK)
                 parser_advance(prs); // Consume ']'
-
+            
             node = new_array_access(node, index);
         }
         else 
@@ -341,7 +342,7 @@ t_node  *parse_assignment(t_parser *prs)
     token = parser_advance(prs);
     if (token == NULL)
         return NULL;
-    
+    printf("assignment token is %s\n", token->value);
     node = parse_logical_or(prs);
     printf("binary_expr: \n");
     print_ast(node  , 1);

@@ -1,6 +1,7 @@
 
 #include "types.h"
 #include "utils.h"
+#include "parser.h"
 
 
 t_parser    *init_parser(t_token *token)
@@ -42,7 +43,8 @@ t_node     *parse_function_decl(t_parser *prs)
     token = parser_advance(prs);
     if (token && token->type != TOKEN_KW_FUNC)
         return NULL;
-    
+
+
     // func ID
     token = parser_advance(prs);
     if (token && token->type != TOKEN_IDENTIFIER) 
@@ -55,14 +57,14 @@ t_node     *parse_function_decl(t_parser *prs)
     if (token && token->type != TOKEN_L_PAREN)
         return NULL;
 
-    
-    token = parser_lookahead(prs);
+    token = parser_peek(prs);
     if (token && token->type == TOKEN_IDENTIFIER)
     {
         params = parse_parameter_list(prs);
         if (params == NULL)
             return NULL;
     }
+
 
     // func ID ( params ) 
     token = parser_advance(prs);    
@@ -76,20 +78,29 @@ t_node     *parse_function_decl(t_parser *prs)
 
     // func ID ( params ) -> DATATYPE
     token = parser_advance(prs);
-    if (token && (token->type != TOKEN_TYPE_I64 && token->type != TOKEN_TYPE_CHAR))
+    if (token == NULL)
+        return NULL;
+    
+    if (token->type != TOKEN_TYPE_I64 && token->type != TOKEN_TYPE_CHAR)
         return NULL;
 
     return_type = strdup(token->value);
-
     // func ID ( params ) -> DATATYPE {
     token = parser_advance(prs);
     if (token && token->type != TOKEN_L_BRACE)
         return NULL;
 
-    token = parser_advance(prs);
+    token = parser_peek(prs);
     if (token && is_statement_intro(token->type))
-        printf("parse_statement()\n");
-        // body = parse_statement()
+    {
+        while (parser_peek(prs) && is_statement_intro(parser_peek(prs)->type))
+        {       
+            body = parse_statement(prs);
+            if (token == NULL)
+                return NULL;
+        }
+    }
+
 
     // func ID ( params ) -> DATATYPE {
     //      body
@@ -115,8 +126,10 @@ t_node     *parser(t_lexer *lx)
         if (traverse->type == TOKEN_KW_FUNC)
         {
             node = parse_function_decl(prs);
-            if (node == NULL)
-                printf("error");
+            if (node == NULL) 
+            {
+                printf("error : %s\n", parser_peek(prs)->value);
+            }
             break;
         }
 

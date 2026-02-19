@@ -6,7 +6,7 @@ struct Node {
 
 func process() -> void {
     struct Node n = Node{id: 1, value: 500, next: 0};
-    var ptr = &n;
+    var ptr Node* = &n;
     
     // Testing the pointer dereference and dot access
     ptr->value = 1000;

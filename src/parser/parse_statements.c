@@ -41,10 +41,12 @@ t_node  *parse_var_decl(t_parser *prs)
 {
     t_token     *token;
     t_node      *node;
+    t_node      *initializer;
     char        *name;
     t_node      *type;
 
     node = NULL;
+    initializer = NULL;
     token = parser_advance(prs);
     if (!token) 
         return NULL;
@@ -59,6 +61,7 @@ t_node  *parse_var_decl(t_parser *prs)
     if (token->type != TOKEN_IDENTIFIER)
         return NULL;
 
+
     name = strdup(token->value);
     if (name == NULL)
         return NULL;
@@ -71,9 +74,16 @@ t_node  *parse_var_decl(t_parser *prs)
     if (token == NULL)
         return NULL;
     
-  //  if (token->type == TOKEN_OP_ASSIGN)    
+    if (token->type == TOKEN_OP_ASSIGN) 
+    {
+        initializer = parse_assignment(prs);
+    } 
 
-    node = new_var_decl(name, type, NULL);
+    token = parser_peek(prs);
+    if (token == NULL)
+        return NULL;
+
+    node = new_var_decl(name, type, initializer);
     if (token->type == TOKEN_SEMICOLON) 
     {
         token = parser_advance(prs);
@@ -89,6 +99,7 @@ t_node  *parse_var_decl(t_parser *prs)
 }
 
 
+
 // <statement>        ::= <var_decl>
 //                     | <return_stmt>
 //                     | <if_stmt>
@@ -96,6 +107,7 @@ t_node  *parse_var_decl(t_parser *prs)
 //                     | <expr_stmt>
 //                     | <break_stmt>
 //                     | <continue_stmt>
+//                     | <function_call>
 
 t_node  *parse_statement(t_parser *prs)
 {
@@ -107,6 +119,7 @@ t_node  *parse_statement(t_parser *prs)
     if (token == NULL)
         return (NULL);
 
+    printf("here once more %s\n", token->value);
     if (token->type == TOKEN_KW_VAR) 
     {
         node = parse_var_decl(prs);
@@ -116,3 +129,5 @@ t_node  *parse_statement(t_parser *prs)
 
     return node;
 }
+
+
