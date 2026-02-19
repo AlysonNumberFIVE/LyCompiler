@@ -32,6 +32,8 @@ t_node     *parse_function_decl(t_parser *prs)
     t_node  *node;
     t_node  *params;
     t_node  *body;
+    t_node  *body_list;
+    t_node *body_head = NULL;
     t_token *token;
     char    *name;
     char    *return_type;
@@ -85,6 +87,7 @@ t_node     *parse_function_decl(t_parser *prs)
         return NULL;
 
     return_type = strdup(token->value);
+
     // func ID ( params ) -> DATATYPE {
     token = parser_advance(prs);
     if (token && token->type != TOKEN_L_BRACE)
@@ -93,22 +96,41 @@ t_node     *parse_function_decl(t_parser *prs)
     token = parser_peek(prs);
     if (token && is_statement_intro(token->type))
     {
+        body_list = NULL;
+        body_head = NULL;
         while (parser_peek(prs) && is_statement_intro(parser_peek(prs)->type))
         {       
             body = parse_statement(prs);
             if (token == NULL)
                 return NULL;
+            
+            if (body_list == NULL)
+            {
+                body_list = body;
+                body_head = body_list;
+            }
+            else 
+            {
+                body_list->next = body;
+                body_list = body_list->next;
+            }
+            printf("token i <<<<<<<<< %s\n", parser_peek(prs)->value);
         }
+        token = parser_peek(prs);
+        if (token == NULL)
+            return NULL;
     }
-
-
+    printf("token i >><<<<<<<<< %s\n", parser_peek(prs)->value); 
     // func ID ( params ) -> DATATYPE {
     //      body
     // }
     if (token && token->type != TOKEN_R_BRACE) 
         return NULL; 
 
-    node = new_func_decl(name, params, return_type, body);
+
+    node = new_func_decl(name, params, return_type, body_head);
+
+    print_ast(node, 1);
     return node;
 }
 

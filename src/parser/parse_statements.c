@@ -87,6 +87,7 @@ t_node  *parse_var_decl(t_parser *prs)
     if (token->type == TOKEN_SEMICOLON) 
     {
         token = parser_advance(prs);
+        printf("tokne <<<<<<<<< is %s\n", token->value);
         if (token == NULL)
             return node;
     }

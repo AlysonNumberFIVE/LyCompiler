@@ -7,9 +7,11 @@
 void print_ast(t_node *node, int depth) {
     if (!node) return;
 
-    // 1. Print indentation
-    for (int i = 0; i < depth; i++) {
-        printf("  │ ");
+    if (node->type != NODE_TYPE_SPEC) {
+        // 1. Print indentation
+        for (int i = 0; i < depth; i++) {
+            printf("  │ ");
+        }
     }
     printf("  ├── ");
 
@@ -95,6 +97,29 @@ void print_ast(t_node *node, int depth) {
             for (int i = 0; i < depth; i++) printf("  │ ");
             printf("  └── Member: %s\n", node->data.member_access.member_name);
             break;
+        case NODE_PARAM:
+            printf("PARAM: %s\n", node->data.param.name);
+            
+            // 1. Print the Type Node
+            for (int i = 0; i < depth; i++) printf("  │ ");
+            printf("  ├── Type: "); 
+            // We pass depth + 1 so the TYPE_SPEC knows how far to indent if needed
+            // (Though here we print TYPE_SPEC on the same line or right after)
+            print_ast(node->data.param.type, depth + 2);
+
+ 
+            break;
+        case NODE_TYPE_SPEC:
+            printf("TYPE_SPEC: %s", node->data.type_spec.base_type);
+            
+            // Print a '*' for every level of pointer indirection
+            for (int i = 0; i < node->data.type_spec.pointer_level; i++)
+            {
+                printf("*");
+            }
+            printf("\n");
+            break;
+    
         default:
             printf("UNKNOWN_NODE_TYPE (%d)\n", node->type);
             break;

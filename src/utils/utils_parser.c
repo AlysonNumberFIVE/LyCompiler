@@ -374,3 +374,15 @@ t_node *new_array_access(t_node *array, t_node *index)
     node->data.array_access.index = index;
     return node;
 }
+
+t_node      *push_node(t_node *head, t_node *append)
+{
+    t_node *traverse;
+
+    traverse = head;
+    while (traverse->next)
+        traverse = traverse->next;
+
+    traverse->next = append;
+    return (traverse);
+}
