@@ -60,7 +60,10 @@ void print_ast(t_node *node, int depth) {
             print_ast(node->data.if_stmt.condition, depth + 1);
             print_ast(node->data.if_stmt.then_branch, depth + 1);
             if (node->data.if_stmt.else_branch)
+            {
                 print_ast(node->data.if_stmt.else_branch, depth + 1);
+            }
+        
             break;
 
         case NODE_FUNCTION_DECL:

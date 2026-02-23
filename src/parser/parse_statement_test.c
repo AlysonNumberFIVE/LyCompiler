@@ -169,8 +169,22 @@ t_lexer *create_expression_if_stmt(void)
  
     push_token(lexer, TOKEN_KW_VAR, "var", 0, 0);
     push_token(lexer, TOKEN_IDENTIFIER, "variable", 0, 4);
-    push_token(lexer, TOKEN_TYPE_CHAR, "char", 0, 0);
-    push_token(lexer, TOKEN_OP_STAR, "*", 0, 0);
+    push_token(lexer, TOKEN_TYPE_CHAR, "i64", 0, 0);
+    push_token(lexer, TOKEN_SEMICOLON, ";", 0, 0);
+    push_token(lexer, TOKEN_R_BRACE, "}", 0, 0);
+
+    push_token(lexer, TOKEN_KW_ELSE, "else", 0, 0);
+    push_token(lexer, TOKEN_KW_IF, "if", 0, 0);
+    push_token(lexer, TOKEN_L_PAREN, "(", 0, 0);
+    push_token(lexer, TOKEN_IDENTIFIER, "zvalue", 0, 0);
+    push_token(lexer, TOKEN_OP_NEQ, "!=", 0, 0);
+    push_token(lexer, TOKEN_INT_LITERAL, "11", 0, 0);
+    push_token(lexer, TOKEN_R_PAREN, ")", 0, 0);
+    push_token(lexer, TOKEN_L_BRACE, "{", 0, 0);
+ 
+    push_token(lexer, TOKEN_KW_VAR, "var", 0, 0);
+    push_token(lexer, TOKEN_IDENTIFIER, "variable", 0, 4);
+    push_token(lexer, TOKEN_TYPE_CHAR, "i64", 0, 0);
     push_token(lexer, TOKEN_SEMICOLON, ";", 0, 0);
     push_token(lexer, TOKEN_R_BRACE, "}", 0, 0);
     return lexer;
@@ -259,15 +273,15 @@ int main(void)
     lexer = create_expression_if_stmt();
 
     parser = init_parser(lexer->head);
-    parse_if_statement(parser);
+    t_node *top = parse_if_statement(parser);
 
     token = parser_peek(parser);
     if (!token)
         printf("parse_func_call:token empty");
     else 
         printf("token value after parse_if_statement : %s\n", token->value);
-
-
+    printf("======================\n");
+    print_ast(top, 1);
     return 0;
 }
 
