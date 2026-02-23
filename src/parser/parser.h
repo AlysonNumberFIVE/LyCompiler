@@ -4,7 +4,6 @@
 
 #include "types.h"
 
-
 bool        is_statement_intro(token_type type);
 
 t_node          *parse_statement(t_parser *prs);
@@ -18,6 +17,7 @@ void            print_ast(t_node *node, int depth);
 t_node          *parse_logical_or(t_parser *prs);
 t_node          *parse_func_call(t_parser *prs);
 t_node          *parse_if_statement(t_parser *prs);
+t_node          *parse_while_stmt(t_parser *prs);
 
 #endif 
 

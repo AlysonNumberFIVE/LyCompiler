@@ -190,6 +190,33 @@ t_lexer *create_expression_if_stmt(void)
     return lexer;
 }
 
+t_lexer     *create_while_statement(void)
+{
+    t_lexer *lexer;
+
+    lexer = init_lexer(); 
+    push_token(lexer, TOKEN_KW_WHILE, "while", 0, 0);
+    push_token(lexer, TOKEN_L_PAREN, "(", 0, 0);
+    push_token(lexer, TOKEN_IDENTIFIER, "xvalue", 0, 0);
+    push_token(lexer, TOKEN_OP_EQ, "==", 0, 0);
+    push_token(lexer, TOKEN_INT_LITERAL, "21", 0, 0);
+    push_token(lexer, TOKEN_R_PAREN, ")", 0, 0);
+    push_token(lexer, TOKEN_L_BRACE, "{", 0, 0);
+ 
+    push_token(lexer, TOKEN_KW_VAR, "var", 0, 0);
+    push_token(lexer, TOKEN_IDENTIFIER, "variable", 0, 4);
+    push_token(lexer, TOKEN_TYPE_CHAR, "i64", 0, 0);
+    push_token(lexer, TOKEN_SEMICOLON, ";", 0, 0);
+
+    push_token(lexer, TOKEN_KW_VAR, "var", 0, 0);
+    push_token(lexer, TOKEN_IDENTIFIER, "vble", 0, 4);
+    push_token(lexer, TOKEN_TYPE_CHAR, "i64", 0, 0);
+    push_token(lexer, TOKEN_SEMICOLON, ";", 0, 0);
+
+    push_token(lexer, TOKEN_R_BRACE, "}", 0, 0); 
+    return lexer; 
+}
+
 int main(void)
 {
     t_lexer *lexer;
@@ -274,6 +301,20 @@ int main(void)
 
     parser = init_parser(lexer->head);
     t_node *top = parse_if_statement(parser);
+
+    token = parser_peek(parser);
+    if (!token)
+        printf("parse_func_call:token empty");
+    else 
+        printf("token value after parse_if_statement : %s\n", token->value);
+    printf("======================\n");
+    print_ast(top, 1);
+
+
+    lexer = create_while_statement();
+
+    parser = init_parser(lexer->head);
+    top = parse_while_stmt(parser);
 
     token = parser_peek(parser);
     if (!token)

@@ -1,18 +1,19 @@
-#include "types.h"
-#include "parser.h"
-#include "utils.h"
 
-t_node  *parse_if_statement(t_parser *prs)
+
+#include "types.h"
+#include "utils.h"
+#include "parser.h"
+
+t_node  *parse_while_stmt(t_parser *prs)
 {
-    t_node      *condition;
-    t_node      *else_condition;
-    t_token     *token;
+    t_node  *node;
+    t_token *token;
+
     t_node      *body;
-    t_node      *node;
     t_node      *body_list;
     t_node      *body_head;
+    t_node      *condition;
 
-    else_condition = NULL;
     body_list = NULL;
     body_head = NULL;
 
@@ -20,7 +21,7 @@ t_node  *parse_if_statement(t_parser *prs)
     if (token == NULL)
         return NULL;
 
-    if (token->type != TOKEN_KW_IF)
+    if (token->type != TOKEN_KW_WHILE)
         return NULL;
     
     token = parser_advance(prs);
@@ -51,9 +52,12 @@ t_node  *parse_if_statement(t_parser *prs)
     token = parser_peek(prs);
     if (token == NULL)
         return NULL;
-
+    
+    printf("here is %s\n", token->value);
     if (token && is_statement_intro(token->type))
     {
+        body_list = NULL;
+        body_head = NULL;
         while (parser_peek(prs) && is_statement_intro(parser_peek(prs)->type))
         {       
             body = parse_statement(prs);
@@ -72,49 +76,10 @@ t_node  *parse_if_statement(t_parser *prs)
             }
         }
     }
-
-    node = new_if_stmt(condition, body_head, NULL);
+    
+    node = new_while_stmt(condition, body_head);
     if (node == NULL)
         return NULL;
 
-    token = parser_advance(prs);
-    if (token == NULL)
-    {
-        // TODO: I'm unsure about this. Added this here to make the unittest work but this feels
-        // arbitrary.
-        return node;
-    }
-
-    if (token->type != TOKEN_R_BRACE)
-        return NULL;
-    
-    token = parser_advance(prs);
-    if (token == NULL)
-        return NULL;
-    
-    if (token->type == TOKEN_KW_ELSE) 
-    {
-        token = parser_peek(prs);
-        if (token == NULL)
-            return NULL;
-
-        if (token->type == TOKEN_KW_IF) 
-            else_condition = parse_if_statement(prs);
-    } 
-
-    node->data.if_stmt.else_branch = else_condition;
     return node;
-    
-}   
-
-
-
-
-
-
-
-
-
-
-
-
+}

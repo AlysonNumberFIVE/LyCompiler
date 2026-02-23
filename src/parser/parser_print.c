@@ -123,34 +123,42 @@ void print_ast(t_node *node, int depth) {
             printf("\n");
             break;
 
-case NODE_CALL:
-    {
-        // 1. Print the Callee
-        // This is a node, so we call print_node recursively on it.
-        // It might be an identifier (like 'foo') or a complex expression.
-        print_ast(node->data.call.callee, depth);
+        case NODE_CALL:
+            {
+                // 1. Print the Callee
+                // This is a node, so we call print_node recursively on it.
+                // It might be an identifier (like 'foo') or a complex expression.
+                print_ast(node->data.call.callee, depth);
 
-        printf("(");
+                printf("(");
 
-        // 2. Print the Arguments (Linked List)
-        t_node *curr_arg = node->data.call.args;
-        while (curr_arg)
-        {
-            // Print the argument expression (don't add depth/indent here)
-            print_ast(curr_arg, 0);
+                // 2. Print the Arguments (Linked List)
+                t_node *curr_arg = node->data.call.args;
+                while (curr_arg)
+                {
+                    // Print the argument expression (don't add depth/indent here)
+                    print_ast(curr_arg, 0);
 
-            // Your struct has 'struct s_node *next', 
-            // so we check it to see if we need a comma.
-            if (curr_arg->next)
-                printf(", ");
-        
-            curr_arg = curr_arg->next;
-        }
+                    // Your struct has 'struct s_node *next', 
+                    // so we check it to see if we need a comma.
+                    if (curr_arg->next)
+                        printf(", ");
+                
+                    curr_arg = curr_arg->next;
+                }
 
-        printf(")");
-        // Note: No semicolon here, usually the expr_stmt or func body handles that.
-        break;
-    }
+                printf(")");
+                // Note: No semicolon here, usually the expr_stmt or func body handles that.
+                break;
+            }
+        case NODE_WHILE_STMT:
+                    printf("WHILE_STMT\n");
+                    print_ast(node->data.while_stmt.condition, depth + 1);
+                    if (node->data.while_stmt.body)
+                    {
+                        print_ast(node->data.while_stmt.body, depth + 1);
+                    }
+                    break;
         default:
             printf("UNKNOWN_NODE_TYPE (%d)\n", node->type);
             break;
