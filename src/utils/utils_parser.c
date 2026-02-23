@@ -343,7 +343,7 @@ t_node  *new_string_literal(char *str)
     if (node == NULL)
         return NULL;
 
-    node->type = NODE_LITERAL_STR;
+    node->type = NODE_LITERAL_STRING;
     node->data.string_literal.str = strdup(str);
     return node;
 }
