@@ -25,7 +25,6 @@
 //                         | <struct_initializer>      
 // <literal>               ::= CHAR_LITERAL | INT_LITERAL | STRING_LITERAL
 
-t_node  *parse_logical_or(t_parser *prs);
 
 // <literal>               ::= CHAR_LITERAL | INT_LITERAL | STRING_LITERAL
 t_node  *parse_literal(t_parser *prs)
@@ -61,14 +60,17 @@ t_node  *parse_literal(t_parser *prs)
     } 
     else if (token->type == TOKEN_L_PAREN) 
     {
-        printf("inside (\n");
-        node = parse_assignment(prs);  
-        if (node == NULL)
-            return NULL;
+        node = parse_logical_or(prs);
 
         token = parser_peek(prs);
-        if (token)
-           printf("after recursion, we are at %s\n", token->value);
+        if (token == NULL)
+            return NULL;
+
+        if (token->type != TOKEN_R_PAREN)
+            return NULL;
+        
+        parser_advance(prs);
+        
     }
     else 
         return NULL;
@@ -88,7 +90,7 @@ t_node  *parse_primary(t_parser *prs)
     if (token == NULL)
         return NULL;
 
-    if (is_literal(token->type) == true)
+    if (is_literal(token->type) == true || token->type == TOKEN_L_PAREN)
         left = parse_literal(prs);
     else if (token->type == TOKEN_IDENTIFIER)
     {
@@ -167,7 +169,7 @@ t_node *parse_multiplicative(t_parser *prs)
     left = parse_postfix(prs);
     if (left == NULL)
         return NULL;
-    
+ 
     while (42) 
     {
         token = parser_peek(prs);     
@@ -306,8 +308,8 @@ t_node  *parse_logical_or(t_parser *prs)
     t_node      *right;
     char        *op;
 
+    printf("token in logical_or is %s\n", parser_peek(prs)->value);
     left = parse_logical_and(prs);
-
     while (42) 
     {
         token = parser_peek(prs);     
@@ -342,7 +344,8 @@ t_node  *parse_assignment(t_parser *prs)
     token = parser_advance(prs);
     if (token == NULL)
         return NULL;
-    printf("assignment token is %s\n", token->value);
+
+    printf("token parse_assignment is %s\n", token->value);
     node = parse_logical_or(prs);
     printf("binary_expr: \n");
     print_ast(node  , 1);

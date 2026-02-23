@@ -23,7 +23,8 @@ bool        is_statement_intro(token_type type)
     return (type == TOKEN_KW_VAR ||
         type == TOKEN_KW_RETURN || 
         type == TOKEN_KW_IF ||
-        type == TOKEN_KW_WHILE);
+        type == TOKEN_KW_WHILE ||
+        type == TOKEN_IDENTIFIER);
 }
 
 // <function_decl>   ::= “func” <identifier> “(“ [ <param_list> ] “)”  “->” <type> <“{“ { <statement_list> } “}” 
@@ -114,13 +115,12 @@ t_node     *parse_function_decl(t_parser *prs)
                 body_list->next = body;
                 body_list = body_list->next;
             }
-            printf("token i <<<<<<<<< %s\n", parser_peek(prs)->value);
         }
         token = parser_peek(prs);
         if (token == NULL)
             return NULL;
     }
-    printf("token i >><<<<<<<<< %s\n", parser_peek(prs)->value); 
+
     // func ID ( params ) -> DATATYPE {
     //      body
     // }

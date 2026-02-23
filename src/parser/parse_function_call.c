@@ -2,40 +2,43 @@
 #include "utils.h"
 #include "parser.h"
 
-
 t_node      *parse_func_call(t_parser *prs)
 {
     t_token     *token;
+    t_node      *args;
+    t_node      *func_name;
     t_node      *node; 
     t_node      *next;
-    char        *name;
+
+    args = NULL;
+    func_name = NULL;
+    token = parser_advance(prs);
+    if (token == NULL)
+        return NULL;
+
+    if (token->type == TOKEN_IDENTIFIER)
+        func_name = new_identifier(token->value);
+
 
     token = parser_advance(prs);
     if (token == NULL)
         return NULL;
 
-    name = strdup(token->value);
-    if (name == NULL)
-        return NULL;
+    if (token->type == TOKEN_L_PAREN)  
+        args = parse_logical_or(prs);
 
-    token = parser_advance(prs);
+    token = parser_peek(prs);
     if (token == NULL)
         return NULL;
-
-    if (token->type == TOKEN_L_PAREN) 
-    {
-        node = parse_expression(prs);
-        if (node == NULL)
-            break ;
-    }
 
     if (token->type == TOKEN_COMMA)
     {
-        next = node;
+        next = args;
         token = parser_advance(prs);
         while (token)
         {
-            next->next = parse_expression(prs);
+
+            next->next = parse_logical_or(prs);
             if (next->next == NULL)
                 return NULL;
 
@@ -47,8 +50,13 @@ t_node      *parse_func_call(t_parser *prs)
             if (token == NULL)
                 break ;
 
-            node_next = node_next->next;
+            next = next->next;
         }
-
     }
+
+    node = new_call(func_name, args);
+    printf("binary_expr func_call: \n");
+    print_ast(node  , 1);
+    printf("======================\n");
+    return node;
 }

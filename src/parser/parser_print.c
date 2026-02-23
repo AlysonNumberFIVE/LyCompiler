@@ -7,12 +7,12 @@
 void print_ast(t_node *node, int depth) {
     if (!node) return;
 
-    if (node->type != NODE_TYPE_SPEC) {
+   //  if (node->type != NODE_TYPE_SPEC) {
         // 1. Print indentation
         for (int i = 0; i < depth; i++) {
             printf("  │ ");
         }
-    }
+  //  }
     printf("  ├── ");
 
     // 2. Handle each node type
@@ -27,7 +27,7 @@ void print_ast(t_node *node, int depth) {
             printf("INT_LITERAL: %ld\n", node->data.int_literal.int_value);
             break;
 
-        case NODE_LITERAL_STR:
+        case NODE_LITERAL_STRING:
             printf("STR_LITERAL: \"%s\"\n", node->data.string_literal.str);
             break;
 
@@ -119,7 +119,35 @@ void print_ast(t_node *node, int depth) {
             }
             printf("\n");
             break;
-    
+
+case NODE_CALL:
+    {
+        // 1. Print the Callee
+        // This is a node, so we call print_node recursively on it.
+        // It might be an identifier (like 'foo') or a complex expression.
+        print_ast(node->data.call.callee, depth);
+
+        printf("(");
+
+        // 2. Print the Arguments (Linked List)
+        t_node *curr_arg = node->data.call.args;
+        while (curr_arg)
+        {
+            // Print the argument expression (don't add depth/indent here)
+            print_ast(curr_arg, 0);
+
+            // Your struct has 'struct s_node *next', 
+            // so we check it to see if we need a comma.
+            if (curr_arg->next)
+                printf(", ");
+        
+            curr_arg = curr_arg->next;
+        }
+
+        printf(")");
+        // Note: No semicolon here, usually the expr_stmt or func body handles that.
+        break;
+    }
         default:
             printf("UNKNOWN_NODE_TYPE (%d)\n", node->type);
             break;
