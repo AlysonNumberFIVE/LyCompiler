@@ -56,6 +56,13 @@ Variables will be denoted with a `var` for ease and unambiguity of parsing.
 var variable i64;
 ```
 
+Assigning value will expand on the variable declaration by adding an `=` and the assigned value.
+```
+var variable i64 = 42;
+```
+
+
+
 
 
 ### Written by Alyson Ngonyama
