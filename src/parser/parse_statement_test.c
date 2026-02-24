@@ -34,6 +34,17 @@ t_lexer *create_valid_expression(void)
     push_token(lexer, TOKEN_OP_MINUS, "-", 0, 0); 
     // push_token(lexer, TOKEN_R_PAREN, ")", 0, 0);
     push_token(lexer, TOKEN_INT_LITERAL, "10", 0, 0);
+    push_token(lexer, TOKEN_OP_MINUS, "-", 0, 0); 
+    push_token(lexer, TOKEN_IDENTIFIER, "function_call", 0, 0);
+    push_token(lexer, TOKEN_L_PAREN, "(", 7, 0);  
+    push_token(lexer, TOKEN_INT_LITERAL, "1231", 0, 0);
+    push_token(lexer, TOKEN_COMMA, ",", 0, 0);  
+    push_token(lexer, TOKEN_INT_LITERAL, "1321", 0, 0);
+    push_token(lexer, TOKEN_COMMA, ",", 0, 0);  
+    push_token(lexer, TOKEN_INT_LITERAL, "11", 0, 0);  
+    push_token(lexer, TOKEN_OP_STAR, "*", 0, 0); 
+    push_token(lexer, TOKEN_INT_LITERAL, "2", 0, 0);  
+    push_token(lexer, TOKEN_R_PAREN, ")", 0, 0);  
     push_token(lexer, TOKEN_SEMICOLON, ";", 0, 0); 
     return lexer;
 }
@@ -138,11 +149,31 @@ t_lexer *create_expression_function_call(void)
 }
 
 
+t_lexer *create_expression_function_call_with_empty_body(void)
+{
+    t_lexer *lexer;
+
+    // function_call();
+    lexer = init_lexer(); 
+    push_token(lexer, TOKEN_IDENTIFIER, "function_call", 0, 0);
+    push_token(lexer, TOKEN_L_PAREN, "(", 0, 0);
+    push_token(lexer, TOKEN_R_PAREN, ")", 0, 0);
+    push_token(lexer, TOKEN_SEMICOLON, ";", 0, 0);
+    return lexer;
+}
+
+
 t_lexer *create_expression_if_stmt(void)
 {
     t_lexer *lexer;
 
-    // printf("Hello %s ", Compiler);
+    // if ( value == 42) {
+    //      var variable i64;
+    // } else if (xvalue == 21) {
+    //      var variable i64;
+    // } else if (zvalue != 11) {
+    //      var variable i64;   
+    // }
     lexer = init_lexer(); 
     push_token(lexer,  TOKEN_KW_IF, "if", 0, 0);
     push_token(lexer, TOKEN_L_PAREN, "(", 0, 0);
@@ -194,6 +225,10 @@ t_lexer     *create_while_statement(void)
 {
     t_lexer *lexer;
 
+    // while (xvalue == 21) {
+    //      var variable i64;
+    //      var vble i64;
+    // }
     lexer = init_lexer(); 
     push_token(lexer, TOKEN_KW_WHILE, "while", 0, 0);
     push_token(lexer, TOKEN_L_PAREN, "(", 0, 0);
@@ -221,6 +256,7 @@ t_lexer     *create_return_stmt(void)
 {
     t_lexer *lexer;
 
+    // return xvalue == 21;
     lexer = init_lexer();
     push_token(lexer, TOKEN_KW_RETURN, "return", 0, 0);
     push_token(lexer, TOKEN_IDENTIFIER, "xvalue", 0, 0);
@@ -232,9 +268,10 @@ t_lexer     *create_return_stmt(void)
 
 int main(void)
 {
-    t_lexer *lexer;
-    t_parser *parser;
-    t_token *token;
+    t_lexer     *lexer;
+    t_parser    *parser;
+    t_token     *token;
+    t_node      *top;
 
     // lexer = create_valid_variable_semicolon();
 
@@ -248,17 +285,20 @@ int main(void)
     //     printf("token value after parse_statement : %s\n", token->value);
 
     
-    // lexer = create_valid_expression();
+    lexer = create_valid_expression();
 
-    // parser = init_parser(lexer->head);
-    // parse_assignment(parser);
+    parser = init_parser(lexer->head);
+    top = parse_assignment(parser);
 
 
-    // token = parser_peek(parser);
-    // if (!token)
-    //     printf("parse_assignment:token empty");
-    // else 
-    //     printf("token value after parse_assignment : %s\n", token->value);
+    token = parser_peek(parser);
+    if (!token)
+        printf("parse_assignment:token empty");
+    else 
+        printf("token value after parse_assignment : %s\n", token->value);
+
+    printf("======================\n");
+    print_ast(top, 1);
 
 
     // lexer = create_valid_expression_with_struct_access();
@@ -300,20 +340,21 @@ int main(void)
     lexer = create_expression_function_call();
 
     parser = init_parser(lexer->head);
-    parse_func_call(parser);
+    top = parse_func_call(parser);
 
     token = parser_peek(parser);
     if (!token)
         printf("parse_func_call:token empty");
     else 
         printf("token value after parse_func_call : %s\n", token->value);
-
+    printf("======================\n");
+    print_ast(top, 1);
 
 
     lexer = create_expression_if_stmt();
 
     parser = init_parser(lexer->head);
-    t_node *top = parse_if_statement(parser);
+    top = parse_if_statement(parser);
 
     token = parser_peek(parser);
     if (!token)
@@ -324,32 +365,47 @@ int main(void)
     print_ast(top, 1);
 
 
-    lexer = create_while_statement();
+    // lexer = create_while_statement();
 
-    parser = init_parser(lexer->head);
-    top = parse_while_stmt(parser);
+    // parser = init_parser(lexer->head);
+    // top = parse_while_stmt(parser);
 
-    token = parser_peek(parser);
-    if (!token)
-        printf("parse_func_call:token empty");
-    else 
-        printf("token value after parse_if_statement : %s\n", token->value);
-    printf("======================\n");
-    print_ast(top, 1);
+    // token = parser_peek(parser);
+    // if (!token)
+    //     printf("parse_func_call:token empty");
+    // else 
+    //     printf("token value after parse_if_statement : %s\n", token->value);
+    // printf("======================\n");
+    // print_ast(top, 1);
 
 
-    lexer = create_return_stmt();
+    // lexer = create_return_stmt();
 
-    parser = init_parser(lexer->head);
-    top = parse_return_stmt(parser);
+    // parser = init_parser(lexer->head);
+    // top = parse_return_stmt(parser);
 
-    token = parser_peek(parser);
-    if (!token)
-        printf("parse_func_call:token empty");
-    else 
-        printf("token value after parse_if_statement : %s\n", token->value);
-    printf("======================\n");
-    print_ast(top, 1);
+    // token = parser_peek(parser);
+    // if (!token)
+    //     printf("parse_func_call:token empty");
+    // else 
+    //     printf("token value after parse_if_statement : %s\n", token->value);
+    // printf("======================\n");
+    // print_ast(top, 1);
+
+
+    // lexer = create_expression_function_call_with_empty_body();
+
+    // parser = init_parser(lexer->head);
+    // top = parse_func_call(parser);
+
+    // token = parser_peek(parser);
+    // if (!token)
+    //     printf("parse_func_call:token empty");
+    // else 
+    //     printf("token value after parse_func_call : %s\n", token->value);
+    // printf("======================\n");   
+    // print_ast(top, 1);
+
     return 0;
 }
 

@@ -82,10 +82,12 @@ t_node  *parse_literal(t_parser *prs)
 //                         | <literal>
 //                         | “(“ <expression> “)”  
 //                         | <struct_initializer>   
+//                         | <call>
 t_node  *parse_primary(t_parser *prs)
 {
-    t_token  *token;
-    t_node *left;
+    t_token     *token;
+    t_node      *left;
+
     token = parser_peek(prs);
     if (token == NULL)
         return NULL;
@@ -94,10 +96,31 @@ t_node  *parse_primary(t_parser *prs)
         left = parse_literal(prs);
     else if (token->type == TOKEN_IDENTIFIER)
     {
-        left = new_identifier(token->value);
-        token = parser_advance(prs);
+        token = parser_lookahead(prs);
         if (token == NULL)
             return NULL;
+
+        if (token->type == TOKEN_L_PAREN)
+            left = parse_func_call(prs);
+        
+        else 
+        {       
+            token = parser_peek(prs);
+            if (token == NULL)
+                return NULL; 
+            printf("regular token is %s\n", token->value);
+            left = new_identifier(token->value);
+
+            token = parser_advance(prs);
+            printf("regular token is next %s\n", token->value);
+            if (token == NULL)
+                return NULL;   
+        }
+
+        // left = new_identifier(token->value);
+        // token = parser_advance(prs);
+        // if (token == NULL)
+        //     return NULL;
     }
     else 
         return NULL;

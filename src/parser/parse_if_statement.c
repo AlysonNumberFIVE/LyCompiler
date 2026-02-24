@@ -51,7 +51,7 @@ t_node  *parse_if_statement(t_parser *prs)
     token = parser_peek(prs);
     if (token == NULL)
         return NULL;
-
+ 
     if (token && is_statement_intro(token->type))
     {
         while (parser_peek(prs) && is_statement_intro(parser_peek(prs)->type))

@@ -30,6 +30,7 @@ t_node      *parse_func_call(t_parser *prs)
     token = parser_peek(prs);
     if (token == NULL)
         return NULL;
+    
 
     if (token->type == TOKEN_COMMA)
     {
@@ -51,9 +52,18 @@ t_node      *parse_func_call(t_parser *prs)
                 break ;
 
             next = next->next;
+
         }
     }
+    
+    token = parser_advance(prs);
+    if (token == NULL)
+        return NULL;
 
+    if (token->type != TOKEN_R_PAREN)
+        return NULL;
+
+    
     node = new_call(func_name, args);
     printf("binary_expr func_call: \n");
     print_ast(node  , 1);

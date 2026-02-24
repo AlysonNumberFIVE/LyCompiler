@@ -45,8 +45,7 @@ t_node     *parse_function_decl(t_parser *prs)
     // func 
     token = parser_advance(prs);
     if (token && token->type != TOKEN_KW_FUNC)
-        return NULL;
-
+        return NULL;    
 
     // func ID
     token = parser_advance(prs);
@@ -67,7 +66,6 @@ t_node     *parse_function_decl(t_parser *prs)
         if (params == NULL)
             return NULL;
     }
-
 
     // func ID ( params ) 
     token = parser_advance(prs);    

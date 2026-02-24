@@ -100,15 +100,14 @@ t_node  *parse_var_decl(t_parser *prs)
 
 
 
-// <statement>        ::= <var_decl>
-//                     | <return_stmt>
-//                     | <if_stmt>
-//                     | <while_stmt>
-//                     | <expr_stmt>
-//                     | <break_stmt>
-//                     | <continue_stmt>
-//                     | <function_call>
-
+// <statement>        ::= <var_decl>        DONE
+//                     | <return_stmt>      DONE
+//                     | <if_stmt>          DONE
+//                     | <while_stmt>       DONE 
+//                     | <expr_stmt>        
+//                     | <break_stmt>       DONE
+//                     | <continue_stmt>    DONE
+//                     | <function_call>    DONE
 t_node  *parse_statement(t_parser *prs)
 {
     t_token *token;
@@ -119,13 +118,12 @@ t_node  *parse_statement(t_parser *prs)
     if (token == NULL)
         return (NULL);
 
-    printf("here once more %s\n", token->value);
     if (token->type == TOKEN_KW_VAR) 
-    {
         node = parse_var_decl(prs);
-        if (node != NULL)
-            print_ast(node, 1);
-    }
+    else if (token->type == TOKEN_KW_IF) 
+        node = parse_if_statement(prs);
+    else if (token->type == TOKEN_IDENTIFIER) 
+        node = parse_logical_or(prs);
 
     return node;
 }

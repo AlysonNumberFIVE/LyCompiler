@@ -19,6 +19,8 @@ t_node          *parse_func_call(t_parser *prs);
 t_node          *parse_if_statement(t_parser *prs);
 t_node          *parse_while_stmt(t_parser *prs);
 t_node          *parse_return_stmt(t_parser *prs);
+t_node          *parse_continue_stmt(t_parser *prs);
+t_node          *parse_break_stmt(t_parser *prs);
 
 #endif 
 
