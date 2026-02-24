@@ -152,13 +152,16 @@ void print_ast(t_node *node, int depth) {
                 break;
             }
         case NODE_WHILE_STMT:
-                    printf("WHILE_STMT\n");
-                    print_ast(node->data.while_stmt.condition, depth + 1);
-                    if (node->data.while_stmt.body)
-                    {
-                        print_ast(node->data.while_stmt.body, depth + 1);
-                    }
-                    break;
+                printf("WHILE_STMT\n");
+                print_ast(node->data.while_stmt.condition, depth + 1);
+                if (node->data.while_stmt.body)
+                {
+                    print_ast(node->data.while_stmt.body, depth + 1);
+                }
+                break;
+        case NODE_RETURN_STMT:
+            printf("RETURN_STMT\n");
+            print_ast(node->data.return_stmt.expression, depth + 1);
         default:
             printf("UNKNOWN_NODE_TYPE (%d)\n", node->type);
             break;
