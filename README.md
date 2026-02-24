@@ -2,7 +2,7 @@
 
 A compiler for an educational system programming language L (not to be confused with the other L). 
 It was initially called LanguageLy (coz a lot of derivative garbage has -ly at the end of a noun).
-This langauge is _purely_ for educational purposes and isn't to be treated as a literal programming laguage, but having said that, I'm writing it as if it were a real programming language because what I learn from this (and hopefully you, the reader) learns more about compiler development than what making a compiler for a toy language can teach you.
+This langauge is _purely_ for educational purposes and isn't to be treated as a literal programming laguage, but having said that, I'm writing it as if it were a production grade programming language because I'm aiming to learn real world practical compiler engineering that can be applicable to the real world.
 
 ![DEATH_NOTE_L_wallpaper](https://github.com/user-attachments/assets/358c9e10-232f-4280-b703-08ed3f746294)
 
@@ -12,7 +12,7 @@ This langauge is _purely_ for educational purposes and isn't to be treated as a 
 
 
 ## What is L
-L is a C-like language with a lot of Golang's syntactic sugar to make parsing it a lot easier and as unambiguous as possible. Its C in the sense that it uses pointers, has no classes, relies on linked lists and the high level representation of the language (in source code) will have a very close 1:1 mapping to the x86 Intel Assembly it outputs. I believe this makes it the perfect compiler learning language as the 1:1 mapping makes things like debugging and the translation of individual logic blocks predictable and easier to communicate in a tutorial style. (i.e concepts like Classes and Interfaces don't exist at the archtecture level so won't be supported in L).
+L is a C-like language with a lot of Golang's syntactic sugar to make parsing it a lot easier and as unambiguous as possible. It is like C in the sense that it uses pointers, has no classes, relies on linked lists, and the high level representation of the language (in source code) will have a very close 1:1 mapping to the x86 Intel Assembly it outputs. I believe this makes it the perfect compiler learning language as the 1:1 mapping makes things like debugging and the translation of individual logic blocks predictable and easier to communicate in a tutorial style for any reader interested in using it that way. (i.e concepts like Classes and Interfaces don't exist at the archtecture level so won't be supported in L).
 
 ### Example:
 In C, declaring a function goes like:
@@ -34,6 +34,28 @@ In C, parsing the above requires consuming `unsigned` and then looking ahead to 
 Where is in L, just like Go, the `var` token sends us into parsing whether our datatype is a variable (and fail if it isn't). Single tokens for datatypes allow us to check a single list without multipel lookaheads. 
 
 Lastly like C (and unlike Go), L only returns a single variable on return. This translates cleanly to a **functoin epilogue** in x86 but more on this later.
+
+
+## The L Syntax
+
+The following is a basic, non-BNF style look at L's syntax with examples.
+
+#### Function Definition
+A function definition will be denoted by the `func` keyword with the return datatye declared after the parameter list
+```
+func function_name(value1 i64, value2 char *) -> i64 {
+    ...
+}
+```
+This was done for unambiguity in function parsing. Once the parser sees a `func`, we know we'll be parsing a function. Function parameters keep the same structure as local variable declaration with the `var` token ommitted (so `ID DATATYPE` whereas local variables are `var ID DATATYPE`)/
+.
+
+#### Variable declaration 
+Variables will be denoted with a `var` for ease and unambiguity of parsing.
+```
+var variable i64;
+```
+
 
 
 ### Written by Alyson Ngonyama
