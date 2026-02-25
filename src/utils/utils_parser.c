@@ -361,6 +361,19 @@ t_node  *new_char_literal(char c)
     return node;
 }
 
+t_node  *new_array(t_node *items)
+{
+    t_node *node;
+
+    node = init_node(); // Using your initializer
+    if (node == NULL)
+        return NULL;
+
+    node->type = NODE_ARRAY;
+    node->data.array.items = items;
+    return node;
+}
+
 t_node *new_array_access(t_node *array, t_node *index)
 {
     t_node *node;

@@ -266,6 +266,27 @@ t_lexer     *create_return_stmt(void)
     return lexer;
 }
 
+
+t_lexer *create_array(void)
+{
+    t_lexer     *lexer;
+
+    lexer = init_lexer();
+    push_token(lexer, TOKEN_L_BLOCK, "[", 0, 0);
+    push_token(lexer, TOKEN_INT_LITERAL, "42", 0, 0);
+    push_token(lexer, TOKEN_COMMA, ",", 0, 0);
+    push_token(lexer, TOKEN_INT_LITERAL, "10", 0, 0);
+    push_token(lexer, TOKEN_COMMA, ",", 0, 0);
+    push_token(lexer, TOKEN_INT_LITERAL, "22", 0, 0);
+    push_token(lexer, TOKEN_COMMA, ",", 0, 0);
+    push_token(lexer, TOKEN_INT_LITERAL, "22", 0, 0);
+    push_token(lexer, TOKEN_OP_STAR, "*", 0, 0); 
+    push_token(lexer, TOKEN_INT_LITERAL, "1", 0, 0);
+    push_token(lexer, TOKEN_R_BLOCK, "]", 0, 0);
+
+    return lexer;
+}
+
 int main(void)
 {
     t_lexer     *lexer;
@@ -285,11 +306,10 @@ int main(void)
     //     printf("token value after parse_statement : %s\n", token->value);
 
     
-    lexer = create_valid_expression();
+    lexer = create_array();
 
     parser = init_parser(lexer->head);
-    top = parse_assignment(parser);
-
+    top = parse_array(parser);
 
     token = parser_peek(parser);
     if (!token)

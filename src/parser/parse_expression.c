@@ -357,6 +357,75 @@ t_node  *parse_logical_or(t_parser *prs)
     return left;
 }
 
+t_node      *parse_array(t_parser *prs)
+{
+    t_token *token;
+    t_node  *node;
+    t_node  *item;
+    t_node  *item_list;
+    t_node  *item_head;
+
+    token = parser_advance(prs);
+    if (token == NULL)
+        return NULL;
+
+    if (token->type != TOKEN_L_BLOCK)
+        return NULL;
+
+    token = parser_advance(prs);
+    if (token == NULL)
+        return NULL;
+
+    item = parse_logical_or(prs);
+
+
+    token = parser_peek(prs);
+    if (token == NULL)
+        return NULL; 
+
+    if (token->type == TOKEN_COMMA) 
+    {
+        item_list = NULL;
+        item_head = NULL;
+        while (token && token->type != TOKEN_R_BLOCK)
+        {
+            token = parser_advance(prs);
+            if (token == NULL)
+                return NULL; 
+            
+            item = parse_logical_or(prs);
+
+            if (item_head == NULL)
+            {
+                item_head = item;
+                item_list = item_head;
+            }
+            else
+            {
+                item_list->next = item;
+                item_list = item_list->next;
+            }
+
+            token = parser_peek(prs);
+            if (token == NULL)
+                return NULL; 
+
+        }
+    }
+    else if (token->type != TOKEN_R_BLOCK)
+        return NULL;
+
+    token = parser_peek(prs);
+    if (token == NULL)
+        return NULL;  
+    
+    printf("tokne vlue is %s\n", token->value);
+    node = new_array(item_head);
+    if (node == NULL)
+        return NULL;
+
+    return node; 
+}
 
 // <assignment>            ::= <logical_or>
 t_node  *parse_assignment(t_parser *prs)

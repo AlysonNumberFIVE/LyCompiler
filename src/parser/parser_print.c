@@ -162,6 +162,14 @@ void print_ast(t_node *node, int depth) {
         case NODE_RETURN_STMT:
             printf("RETURN_STMT\n");
             print_ast(node->data.return_stmt.expression, depth + 1);
+
+        case NODE_ARRAY:
+            printf("NODE_ARRAY\n");
+            t_node *array = node->data.array.items;
+                print_ast(array, depth + 1);
+           //     array = array->next;
+        
+
         default:
             printf("UNKNOWN_NODE_TYPE (%d)\n", node->type);
             break;

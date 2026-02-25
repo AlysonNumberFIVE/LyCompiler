@@ -58,6 +58,7 @@ t_node          *new_int_literal(long i);
 t_node          *new_string_literal(char *str);
 t_node          *new_char_literal(char c);
 t_node          *new_array_access(t_node *array, t_node *index);
+t_node          *new_array(t_node *items);
 t_node          *push_node(t_node *head, t_node *append);
 
 t_token         *parser_lookahead(t_parser *prs);
