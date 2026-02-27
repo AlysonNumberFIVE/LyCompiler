@@ -51,6 +51,7 @@ t_node  *parse_var_decl(t_parser *prs)
     if (!token) 
         return NULL;
 
+    printf("var_decl token is %s\n", token->value);
     if (token->type != TOKEN_KW_VAR) 
         return NULL;
     
@@ -118,13 +119,22 @@ t_node  *parse_statement(t_parser *prs)
     if (token == NULL)
         return (NULL);
 
+    printf("token type KW _________ %s\n", token->value);
     if (token->type == TOKEN_KW_VAR) 
-        node = parse_var_decl(prs);
+    {
+        node = parse_var_decl(prs);      
+    }
     else if (token->type == TOKEN_KW_IF) 
+    {
         node = parse_if_statement(prs);
+    }
     else if (token->type == TOKEN_IDENTIFIER) 
+    {  
+        printf("LOGICAL\n");
         node = parse_logical_or(prs);
-
+        parser_advance(prs);
+    }
+    printf("BEFORE EXITING PARSE_STATEMENT %s\n", parser_peek(prs)->value);
     return node;
 }
 

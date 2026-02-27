@@ -182,11 +182,21 @@ t_lexer *create_expression_if_stmt(void)
     push_token(lexer, TOKEN_INT_LITERAL, "42", 0, 0);
     push_token(lexer, TOKEN_R_PAREN, ")", 0, 0);
     push_token(lexer, TOKEN_L_BRACE, "{", 0, 0);
- 
-    push_token(lexer, TOKEN_KW_VAR, "var", 0, 0);
-    push_token(lexer, TOKEN_IDENTIFIER, "variable", 0, 4);
-    push_token(lexer, TOKEN_TYPE_I64, "i64", 0, 0);
+    // push_token(lexer, TOKEN_KW_VAR, "var", 0, 0);
+    // push_token(lexer, TOKEN_IDENTIFIER, "variablxadfe", 0, 4);
+    // push_token(lexer, TOKEN_TYPE_CHAR, "i64", 0, 0);
+    // push_token(lexer, TOKEN_SEMICOLON, ";", 0, 0);
+    push_token(lexer, TOKEN_IDENTIFIER, "dprintf", 0, 0);
+    push_token(lexer, TOKEN_L_PAREN, "(", 0, 0);
+    push_token(lexer, TOKEN_STRING_LITERAL, "\"Hello %s \"", 0 ,0);
+    push_token(lexer, TOKEN_COMMA, ",", 0, 0); 
+    push_token(lexer, TOKEN_IDENTIFIER, "Compiler", 0, 0);
+    push_token(lexer, TOKEN_COMMA, ",", 0, 0); 
+    push_token(lexer, TOKEN_INT_LITERAL, "42", 0 , 0);
+    push_token(lexer, TOKEN_R_PAREN, ")", 0, 0);
     push_token(lexer, TOKEN_SEMICOLON, ";", 0, 0);
+   
+   
     push_token(lexer, TOKEN_R_BRACE, "}", 0, 0);
 
     push_token(lexer, TOKEN_KW_ELSE, "else", 0, 0);
@@ -199,7 +209,7 @@ t_lexer *create_expression_if_stmt(void)
     push_token(lexer, TOKEN_L_BRACE, "{", 0, 0);
  
     push_token(lexer, TOKEN_KW_VAR, "var", 0, 0);
-    push_token(lexer, TOKEN_IDENTIFIER, "variable", 0, 4);
+    push_token(lexer, TOKEN_IDENTIFIER, "zzzariable", 0, 4);
     push_token(lexer, TOKEN_TYPE_CHAR, "i64", 0, 0);
     push_token(lexer, TOKEN_SEMICOLON, ";", 0, 0);
     push_token(lexer, TOKEN_R_BRACE, "}", 0, 0);
@@ -214,7 +224,7 @@ t_lexer *create_expression_if_stmt(void)
     push_token(lexer, TOKEN_L_BRACE, "{", 0, 0);
  
     push_token(lexer, TOKEN_KW_VAR, "var", 0, 0);
-    push_token(lexer, TOKEN_IDENTIFIER, "variable", 0, 4);
+    push_token(lexer, TOKEN_IDENTIFIER, "3233variable", 0, 4);
     push_token(lexer, TOKEN_TYPE_CHAR, "i64", 0, 0);
     push_token(lexer, TOKEN_SEMICOLON, ";", 0, 0);
     push_token(lexer, TOKEN_R_BRACE, "}", 0, 0);
@@ -281,10 +291,32 @@ t_lexer *create_array(void)
     push_token(lexer, TOKEN_COMMA, ",", 0, 0);
     push_token(lexer, TOKEN_INT_LITERAL, "22", 0, 0);
     push_token(lexer, TOKEN_OP_STAR, "*", 0, 0); 
-    push_token(lexer, TOKEN_INT_LITERAL, "1", 0, 0);
+    push_token(lexer, TOKEN_INT_LITERAL, "1 C", 0, 0);
     push_token(lexer, TOKEN_R_BLOCK, "]", 0, 0);
 
     return lexer;
+}
+
+t_lexer     *create_struct(void)
+{
+    t_lexer *lexer;
+
+    lexer = init_lexer();
+    push_token(lexer, TOKEN_KW_STRUCT, "struct", 0, 0);
+    push_token(lexer, TOKEN_IDENTIFIER, "Node", 0, 0);
+    push_token(lexer, TOKEN_L_BRACE, "{", 0, 0);
+    push_token(lexer, TOKEN_IDENTIFIER, "value1", 0, 0);
+    push_token(lexer, TOKEN_TYPE_I64, "i64", 0, 0);
+    push_token(lexer, TOKEN_SEMICOLON, ";", 0, 0);
+    push_token(lexer, TOKEN_IDENTIFIER, "c", 0, 0);
+    push_token(lexer, TOKEN_TYPE_I64, "char", 0, 0);
+    push_token(lexer, TOKEN_OP_STAR, "*", 0, 0);
+    push_token(lexer, TOKEN_SEMICOLON, ";", 0, 0);
+    push_token(lexer, TOKEN_IDENTIFIER, "context", 0, 0);
+    push_token(lexer, TOKEN_TYPE_I64, "char", 0, 0);
+    push_token(lexer, TOKEN_SEMICOLON, ";", 0, 0); 
+    push_token(lexer, TOKEN_R_BRACE, "}", 0, 0); 
+    return lexer; 
 }
 
 int main(void)
@@ -306,20 +338,34 @@ int main(void)
     //     printf("token value after parse_statement : %s\n", token->value);
 
     
-    lexer = create_array();
+    // lexer = create_array();
 
-    parser = init_parser(lexer->head);
-    top = parse_array(parser);
+    // parser = init_parser(lexer->head);
+    // top = parse_array(parser);
 
-    token = parser_peek(parser);
-    if (!token)
-        printf("parse_assignment:token empty");
-    else 
-        printf("token value after parse_assignment : %s\n", token->value);
+    // token = parser_peek(parser);
+    // if (!token)
+    //     printf("parse_assignment:token empty");
+    // else 
+    //     printf("token value after parse_assignment : %s\n", token->value);
 
-    printf("======================\n");
-    print_ast(top, 1);
+    // printf("======================\n");
+    // print_ast(top, 1);
 
+
+    // lexer = create_struct();
+
+    // parser = init_parser(lexer->head);
+    // top = parse_struct(parser);
+
+    // token = parser_peek(parser);
+    // if (!token)
+    //     printf("parse_assignment:token empty");
+    // else 
+    //     printf("token value after create_struct : %s\n", token->value);
+
+    // printf("======================\n");
+    // print_ast(top, 1);
 
     // lexer = create_valid_expression_with_struct_access();
 
@@ -370,7 +416,7 @@ int main(void)
     printf("======================\n");
     print_ast(top, 1);
 
-
+    printf("\n\n\n\n\n\n");
     lexer = create_expression_if_stmt();
 
     parser = init_parser(lexer->head);

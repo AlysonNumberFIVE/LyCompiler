@@ -91,7 +91,7 @@ t_node  *parse_primary(t_parser *prs)
     token = parser_peek(prs);
     if (token == NULL)
         return NULL;
-
+    printf("PARSE_PRIMARY ||||||| %s\n", token->value);
     if (is_literal(token->type) == true || token->type == TOKEN_L_PAREN)
         left = parse_literal(prs);
     else if (token->type == TOKEN_IDENTIFIER)
@@ -101,8 +101,10 @@ t_node  *parse_primary(t_parser *prs)
             return NULL;
 
         if (token->type == TOKEN_L_PAREN)
+        {
+            printf("BEOFRE FUNCTION CALL %s\n", parser_peek(prs)->value);
             left = parse_func_call(prs);
-        
+        }        
         else 
         {       
             token = parser_peek(prs);
@@ -116,15 +118,11 @@ t_node  *parse_primary(t_parser *prs)
             if (token == NULL)
                 return NULL;   
         }
-
-        // left = new_identifier(token->value);
-        // token = parser_advance(prs);
-        // if (token == NULL)
-        //     return NULL;
     }
     else 
         return NULL;
     
+    printf("============= after parse_primary ============== %s\n", parser_peek(prs)->value);
     return left;
 }
 
@@ -331,7 +329,7 @@ t_node  *parse_logical_or(t_parser *prs)
     t_node      *right;
     char        *op;
 
-    printf("token in logical_or is %s\n", parser_peek(prs)->value);
+    printf("token in logical_or is |||| %s\n", parser_peek(prs)->value);
     left = parse_logical_and(prs);
     while (42) 
     {
@@ -442,5 +440,7 @@ t_node  *parse_assignment(t_parser *prs)
     printf("binary_expr: \n");
     print_ast(node  , 1);
     printf("======================\n");
+
+
     return node;
 }

@@ -20,6 +20,7 @@ t_node  *parse_if_statement(t_parser *prs)
     if (token == NULL)
         return NULL;
 
+    printf("token value in if_statement is %s\n", token->value);
     if (token->type != TOKEN_KW_IF)
         return NULL;
     
@@ -51,9 +52,10 @@ t_node  *parse_if_statement(t_parser *prs)
     token = parser_peek(prs);
     if (token == NULL)
         return NULL;
- 
+    
     if (token && is_statement_intro(token->type))
     {
+  
         while (parser_peek(prs) && is_statement_intro(parser_peek(prs)->type))
         {       
             body = parse_statement(prs);
@@ -70,7 +72,7 @@ t_node  *parse_if_statement(t_parser *prs)
                 body_list->next = body;
                 body_list = body_list->next;
             }
-        }
+        } 
     }
 
     node = new_if_stmt(condition, body_head, NULL);
@@ -87,17 +89,17 @@ t_node  *parse_if_statement(t_parser *prs)
 
     if (token->type != TOKEN_R_BRACE)
         return NULL;
-    
+
     token = parser_advance(prs);
     if (token == NULL)
-        return NULL;
+        return node;
     
     if (token->type == TOKEN_KW_ELSE) 
     {
         token = parser_peek(prs);
         if (token == NULL)
             return NULL;
-
+    
         if (token->type == TOKEN_KW_IF) 
             else_condition = parse_if_statement(prs);
     } 

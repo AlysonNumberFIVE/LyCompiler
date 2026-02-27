@@ -50,16 +50,18 @@ t_node  *parse_type(t_parser *prs)
                 break;
             }
         }
-        token = parser_advance(prs);
-        if (token == NULL)
-            return NULL;
+        // token = parser_advance(prs);
+        // if (token == NULL)
+        //     return NULL;
     }
 
     printf("base_type: %s nad pointer_level %d\n", base_type, pointer_level);
     // <type_spec> { "*" }
+    printf("toke nis now %s\n", parser_peek(prs)->value);
     node = new_type_spec(base_type, pointer_level); 
     if (node == NULL)
         return NULL;
+
 
     // <type>       ::= <type_spec> { "*" }
     return node;
@@ -75,9 +77,11 @@ t_node  *parse_parameter(t_parser *prs)
 
     // IDENTIFIER 
     token = parser_advance(prs);
+    printf("token is param %s\n", token->value);
     if (token && token->type != TOKEN_IDENTIFIER)
         return NULL;
-
+    
+    printf("token is parameter %s\n", token->value);
     name = strdup(token->value);
 
     // fetch <type>

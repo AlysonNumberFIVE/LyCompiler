@@ -15,7 +15,8 @@ t_node      *parse_func_call(t_parser *prs)
     token = parser_advance(prs);
     if (token == NULL)
         return NULL;
-
+    
+    printf("INSIDE FUNCTION CALL %s\n", token->value);
     if (token->type == TOKEN_IDENTIFIER)
         func_name = new_identifier(token->value);
 
@@ -55,7 +56,7 @@ t_node      *parse_func_call(t_parser *prs)
 
         }
     }
-    
+    printf("token in function call is %s\n", token->value);
     token = parser_advance(prs);
     if (token == NULL)
         return NULL;

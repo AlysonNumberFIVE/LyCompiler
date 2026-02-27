@@ -22,6 +22,9 @@ t_node          *parse_return_stmt(t_parser *prs);
 t_node          *parse_continue_stmt(t_parser *prs);
 t_node          *parse_break_stmt(t_parser *prs);
 t_node          *parse_array(t_parser *prs);
+t_node          *parse_struct(t_parser *prs);
+
+t_node          *parse_parameter(t_parser *prs);
 
 #endif 
 

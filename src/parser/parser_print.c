@@ -168,7 +168,18 @@ void print_ast(t_node *node, int depth) {
             t_node *array = node->data.array.items;
                 print_ast(array, depth + 1);
            //     array = array->next;
-        
+        case NODE_STRUCT_DECL: 
+            printf("NODE_STRUCT_DECL\n");
+            printf("Struct: %s\n", node->data.struct_decl.name); 
+            printf("    | Members:\n");
+            t_node *parameter = node->data.struct_decl.members;
+            while (parameter)
+            {
+                for (int i = 0; i < depth; i++) 
+                    printf("  ");
+                printf("-> name: %s, type: %s\n", parameter->data.param.name, parameter->data.param.type->data.type_spec.base_type);
+                parameter = parameter->next;
+            }
 
         default:
             printf("UNKNOWN_NODE_TYPE (%d)\n", node->type);
