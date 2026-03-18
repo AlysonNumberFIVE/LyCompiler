@@ -132,7 +132,9 @@ typedef enum {
     NODE_LITERAL_ARRAY,
     NODE_LITERAL_INT,
     NODE_LITERAL_CHAR,
-    NODE_LITERAL_STRING
+    NODE_LITERAL_STRING,
+
+    NODE_ERROR
 }   node_type;
 
 typedef struct s_node {
@@ -271,6 +273,11 @@ typedef struct s_node {
             struct s_node *items;
         }   array;
     }   data;
+
+
+    char    *error_msg;
+    int     line;
+    int     column;
 
     struct s_node *next; 
 }   t_node;

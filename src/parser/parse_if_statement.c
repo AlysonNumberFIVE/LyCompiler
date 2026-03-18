@@ -87,6 +87,7 @@ t_node  *parse_if_statement(t_parser *prs)
         return node;
     }
 
+
     if (token->type != TOKEN_R_BRACE)
         return NULL;
 
@@ -105,8 +106,17 @@ t_node  *parse_if_statement(t_parser *prs)
     } 
 
     node->data.if_stmt.else_branch = else_condition;
-    return node;
-    
+
+    token = parser_peek(prs);
+    if (token == NULL)
+        return NULL;
+
+    if (token->type != TOKEN_R_BRACE)
+        return NULL;
+
+    parser_advance(prs);
+    printf("if statement parser peek %s\n", parser_peek(prs)->value);
+    return node; 
 }   
 
 

@@ -37,25 +37,16 @@ t_node  *parse_type(t_parser *prs)
 
     // { "*" }
     token = parser_peek(prs);
-    if (token && token->type == TOKEN_OP_STAR) 
+    while (token && token->type == TOKEN_OP_STAR) 
     {
-        while (token && token->type == TOKEN_OP_STAR)
-        {
-            token = parser_advance(prs);
-            pointer_level++;
-            token = parser_lookahead(prs);
-            if (token && token->type != TOKEN_OP_STAR)  
-            {
-                pointer_level++;
-                break;
-            }
-        }
-        // token = parser_advance(prs);
-        // if (token == NULL)
-        //     return NULL;
+        parser_advance(prs); 
+        pointer_level++;
+        
+        token = parser_peek(prs); 
     }
 
     printf("base_type: %s nad pointer_level %d\n", base_type, pointer_level);
+
     // <type_spec> { "*" }
     printf("toke nis now %s\n", parser_peek(prs)->value);
     node = new_type_spec(base_type, pointer_level); 
@@ -85,6 +76,7 @@ t_node  *parse_parameter(t_parser *prs)
     name = strdup(token->value);
 
     // fetch <type>
+    printf("name: %s ", name);
     type = parse_type(prs);
     if (type == NULL)
         return NULL;

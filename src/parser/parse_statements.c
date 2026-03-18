@@ -99,7 +99,55 @@ t_node  *parse_var_decl(t_parser *prs)
     return node;
 }
 
+t_node  *parse_var_assign(t_parser *prs)
+{
+    t_token     *token;
+    t_node      *node; 
+  //  t_node      *assign;
 
+    node = parse_logical_or(prs);
+
+    token = parser_peek(prs);
+    printf("parser_var_asign %s\n", token->value);
+    
+    if (!token)
+        return NULL;
+
+    if (token->type != TOKEN_SEMICOLON)
+        return NULL;
+
+    return node;
+}
+
+bool    is_statement_scope(token_type type)
+{
+    return (type == TOKEN_KW_IF || type == TOKEN_KW_WHILE);
+}
+
+
+t_node  *parse_statement_scope(t_parser *prs)
+{
+    t_token *token;
+    t_node *node;
+
+    node = NULL;
+    token = parser_peek(prs);
+    if (token == NULL)
+        return (NULL);
+
+    if (token->type == TOKEN_KW_IF) 
+    {
+        node = parse_if_statement(prs);
+        printf("exit if\n");
+    }
+    else if (token->type == TOKEN_KW_WHILE) 
+    {
+        printf("while stmt\n");
+        node = parse_while_stmt(prs);
+    }
+
+    return node;
+}
 
 // <statement>        ::= <var_decl>        DONE
 //                     | <return_stmt>      DONE
@@ -123,18 +171,20 @@ t_node  *parse_statement(t_parser *prs)
     if (token->type == TOKEN_KW_VAR) 
     {
         node = parse_var_decl(prs);      
+        printf("parse_var_decl AFTER %s\n", parser_peek(prs)->value);
     }
-    else if (token->type == TOKEN_KW_IF) 
-    {
-        node = parse_if_statement(prs);
-    }
-    else if (token->type == TOKEN_IDENTIFIER) 
+    else if (token->type == TOKEN_IDENTIFIER || is_literal(token->type)) 
     {  
         printf("LOGICAL\n");
-        node = parse_logical_or(prs);
+        node = parse_var_assign(prs);
         parser_advance(prs);
     }
-    printf("BEFORE EXITING PARSE_STATEMENT %s\n", parser_peek(prs)->value);
+    else if (token->type == TOKEN_KW_IF || token->type == TOKEN_KW_WHILE) 
+    {
+        node = parse_statement_scope(prs);
+    }
+   
+    printf("BEFORE EXITING PARSE_STATEMENT %s %d\n", parser_peek(prs)->value, parser_peek(prs)->line);
     return node;
 }
 

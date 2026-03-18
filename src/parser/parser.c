@@ -50,7 +50,7 @@ t_node     *parse_function_decl(t_parser *prs)
     // func ID
     token = parser_advance(prs);
     if (token && token->type != TOKEN_IDENTIFIER) 
-        return NULL;
+        return init_error("error: expected identifier", token->line, token->column);
 
     name = strdup(token->value);
 
@@ -128,32 +128,70 @@ t_node     *parse_function_decl(t_parser *prs)
 
     node = new_func_decl(name, params, return_type, body_head);
 
-    print_ast(node, 1);
+    token = parser_peek(prs);
+    if (token == NULL)
+        return NULL;
+
+    printf("token is func %s\n", token->value);
+    if (token->type != TOKEN_R_BRACE)
+        return NULL;
+
+    token = parser_advance(prs);
+
     return node;
 }
+
 
 t_node     *parser(t_lexer *lx)
 {
     t_parser    *prs;
-    t_node      *node;
+  //  t_node      *node;
+    t_node      *functions;
+    t_node      *structs;
+ //   t_node      *variables; // global variables;
     t_token     *traverse;
 
     prs = init_parser(lx->head);
     while (prs->token)
     {
-        traverse = prs->token;
+        traverse = parser_peek(prs);
         // Global level tokens
         if (traverse->type == TOKEN_KW_FUNC)
-        {
-            node = parse_function_decl(prs);
-            if (node == NULL) 
+        {   
+        
+            functions = parse_function_decl(prs);
+            if (functions->type == NODE_ERROR)
             {
-                printf("error : %s\n", parser_peek(prs)->value);
+                traverse = search_for_recovery(prs);
+                printf("recovery is %s\n", traverse->value);
             }
-            break;
+            else
+            {
+                printf("function parsed\n");
+            }
         }
+        else if (traverse->type == TOKEN_KW_STRUCT)
+        {
+            structs = parse_struct(prs);
+            if (structs == NULL)
+                break ;
+            
+            printf("Struct : %s\n", parser_peek(prs)->value);
+        
+        } 
+        else if (traverse->type == TOKEN_KW_VAR) 
+        {
+            printf("variable assign\n");
+            parse_var_decl(prs);
 
+        } 
+        else 
+        {
+            break ;
+        } 
     }    
 
+    print_ast(functions, 1);
+    print_ast(structs, 1);
     return NULL;
 }

@@ -54,6 +54,20 @@ t_node  *init_program(void)
     return node;
 }
 
+t_node  *init_error(char *message, int line, int column)
+{
+    t_node  *node;
+
+    node = init_node();
+    if (node == NULL)
+        return NULL;
+
+    node->type = NODE_ERROR;
+    node->line = line;
+    node->column = column;
+    node->error_msg = strdup(message);
+    return node;
+}
 
 t_node  *new_struct_decl(char *name, t_node *members) 
 {

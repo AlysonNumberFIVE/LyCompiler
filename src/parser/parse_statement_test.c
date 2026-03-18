@@ -68,6 +68,17 @@ t_lexer *create_valid_expression_with_struct_access(void)
     return lexer;
 }
 
+t_lexer *create_valid_expression_for_string(void)
+{
+    t_lexer *lexer;
+
+    lexer = init_lexer();
+    push_token(lexer, TOKEN_OP_ASSIGN, "=", 0, 0);
+    push_token(lexer, TOKEN_STRING_LITERAL, "\"Hello World\"", 0, 0);
+    push_token(lexer, TOKEN_SEMICOLON, ";", 0, 0); 
+    return lexer;
+}
+
 t_lexer *create_valid_expression_with_array_access(void)
 {
     t_lexer *lexer;
@@ -353,19 +364,19 @@ int main(void)
     // print_ast(top, 1);
 
 
-    // lexer = create_struct();
+    lexer = create_struct();
 
-    // parser = init_parser(lexer->head);
-    // top = parse_struct(parser);
+    parser = init_parser(lexer->head);
+    top = parse_struct(parser);
 
-    // token = parser_peek(parser);
-    // if (!token)
-    //     printf("parse_assignment:token empty");
-    // else 
-    //     printf("token value after create_struct : %s\n", token->value);
+    token = parser_peek(parser);
+    if (!token)
+        printf("parse_assignment:token empty");
+    else 
+        printf("token value after create_struct : %s\n", token->value);
 
-    // printf("======================\n");
-    // print_ast(top, 1);
+    printf("======================\n");
+    print_ast(top, 1);
 
     // lexer = create_valid_expression_with_struct_access();
 
@@ -403,10 +414,24 @@ int main(void)
     //     printf("token value after parse_assignment : %s\n", token->value);
 
 
-    lexer = create_expression_function_call();
+    // lexer = create_expression_function_call();
+
+    // parser = init_parser(lexer->head);
+    // top = parse_func_call(parser);
+
+    // token = parser_peek(parser);
+    // if (!token)
+    //     printf("parse_func_call:token empty");
+    // else 
+    //     printf("token value after parse_func_call : %s\n", token->value);
+    // printf("======================\n");
+    // print_ast(top, 1);
+
+
+    lexer = create_valid_expression_for_string();
 
     parser = init_parser(lexer->head);
-    top = parse_func_call(parser);
+    top = parse_assignment(parser);
 
     token = parser_peek(parser);
     if (!token)
@@ -417,18 +442,18 @@ int main(void)
     print_ast(top, 1);
 
     printf("\n\n\n\n\n\n");
-    lexer = create_expression_if_stmt();
+    // lexer = create_expression_if_stmt();
 
-    parser = init_parser(lexer->head);
-    top = parse_if_statement(parser);
+    // parser = init_parser(lexer->head);
+    // top = parse_if_statement(parser);
 
-    token = parser_peek(parser);
-    if (!token)
-        printf("parse_func_call:token empty");
-    else 
-        printf("token value after parse_if_statement : %s\n", token->value);
-    printf("======================\n");
-    print_ast(top, 1);
+    // token = parser_peek(parser);
+    // if (!token)
+    //     printf("parse_func_call:token empty");
+    // else 
+    //     printf("token value after parse_if_statement : %s\n", token->value);
+    // printf("======================\n");
+    // print_ast(top, 1);
 
 
     // lexer = create_while_statement();

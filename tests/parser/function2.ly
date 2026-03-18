@@ -1,12 +1,26 @@
 
 
 
-func test_function(x i64, y i64) -> i64 {
+struct Node {
+	value char**;
+	i i64;
+}
+
+
+
+
+ func test_function(x i64, y i64) -> i64 {
 	var a i64 = 42 * 11 + 121;
 	var b i64 = 11 * 22;
 	var c i64 = x;
+	var str char** = "Hello World";
 
+	parser = parser->next["value"];
 	var d i64 = (a + b * c) - 2 * 8 * malloc(value + 42) + 11;
+
+	while (42) {
+		printf("$>");
+	} 
 	
 	if (if_statement_check == 42) {
 		printf("hell oworld\n", 2);
@@ -16,5 +30,4 @@ func test_function(x i64, y i64) -> i64 {
 	}
 
 }
-
 

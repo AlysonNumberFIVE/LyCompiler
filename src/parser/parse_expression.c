@@ -34,6 +34,7 @@ t_node  *parse_literal(t_parser *prs)
     long        integer;
     char        *strlol_ptr;
 
+    printf("here it is parse_literal %s\n", parser_peek(prs)->value);
     token = parser_advance(prs);
     if (token == NULL)
         return NULL;
@@ -51,7 +52,9 @@ t_node  *parse_literal(t_parser *prs)
         node = new_int_literal(integer);
     }
     else if (token->type == TOKEN_STRING_LITERAL)
-        node = new_string_literal(token->value);
+    {
+        node = new_string_literal(token->value); 
+    }
     else if (token->type == TOKEN_CHAR_LITERAL)
     {
         if (strlen(token->value) != 1)
@@ -91,7 +94,6 @@ t_node  *parse_primary(t_parser *prs)
     token = parser_peek(prs);
     if (token == NULL)
         return NULL;
-    printf("PARSE_PRIMARY ||||||| %s\n", token->value);
     if (is_literal(token->type) == true || token->type == TOKEN_L_PAREN)
         left = parse_literal(prs);
     else if (token->type == TOKEN_IDENTIFIER)
@@ -122,7 +124,7 @@ t_node  *parse_primary(t_parser *prs)
     else 
         return NULL;
     
-    printf("============= after parse_primary ============== %s\n", parser_peek(prs)->value);
+    printf("============= after parse_primary ============== %s %dd\n", parser_peek(prs)->value, parser_peek(prs)->line);
     return left;
 }
 

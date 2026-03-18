@@ -23,8 +23,9 @@ SHARED_SRCS  := utils/utils_error.c \
 				parser/parse_if_statement.c \
 				parser/parse_while_statement.c \
 				parser/parse_return_statement.c \
-				parser/parse_struct.c 
-                # parser/errors.c
+				parser/parse_struct.c \
+				parser/errors.c
+           
 
 # 2. ENTRY POINTS
 MAIN_SRC     := main.c
@@ -41,7 +42,7 @@ OBJS              := $(SRCS:%.c=$(OBJ_DIR)/%.o)
 PARSER_TEST_OBJS  := $(PARSER_TEST_SRCS:%.c=$(OBJ_DIR)/%.o)
 
 # Compiler and Flags
-CC           := gcc
+CC           := gcc 
 CFLAGS       := -Wall -Wextra -Werror -Iinc -Isrc/utils -Isrc/lexer -Isrc/parser
 
 # Build Rules

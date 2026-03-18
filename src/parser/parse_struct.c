@@ -72,5 +72,14 @@ t_node      *parse_struct(t_parser *prs)
     if (node == NULL)
         return NULL;
 
+    token = parser_peek(prs);
+    if (token == NULL)
+        return NULL;
+
+    if (token->type != TOKEN_R_BRACE)
+        return NULL;
+
+    parser_advance(prs);
+
     return node; 
 }

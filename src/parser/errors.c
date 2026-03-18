@@ -8,19 +8,21 @@ bool        recovery_tokens(token_type type)
         type == TOKEN_KW_FUNC ||
         type == TOKEN_KW_IF ||
         type == TOKEN_KW_WHILE || 
-        type == TOKEN_KW_RETURN);
+        type == TOKEN_KW_RETURN ||
+        type == TOKEN_KW_FUNC);
 }    
 
-void        traverse_to_recovery_token(t_parser *prs)
+t_token    *search_for_recovery(t_parser *prs)
 {
-    t_token *traverse;
+    t_token *token;
 
-    traverse = parser_peek(prs);
-    while (traverse && !recovery_tokens(traverse->type))
-        traverse = parser_advance(prs);
-}
+    while (parser_peek(prs) && !recovery_tokens(parser_peek(prs)->type))
+    {
+        token = parser_advance(prs);
+        if (token == NULL)
+            return NULL;
+    }
 
-void        error_mode(t_parser *prs)
-{
-    
+ //   token = parser_advance(prs);
+    return token;
 }
