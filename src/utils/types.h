@@ -87,6 +87,7 @@ typedef struct s_error_chain
 typedef struct {
     t_error_chain *head;
     t_error_chain *tail;
+    int           count;
 }   t_error_control;
 
 typedef struct {

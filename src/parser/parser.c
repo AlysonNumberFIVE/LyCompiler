@@ -13,7 +13,7 @@ t_parser    *init_parser(t_token *token)
         return NULL;
 
     prs->token = token;
-    prs->errors = NULL;
+    prs->errors = init_error_control();
     prs->ast = NULL;
     return prs;
 }
@@ -52,40 +52,40 @@ t_node     *parse_function_decl(t_parser *prs)
     // func ID
     token = parser_advance(prs);
     if (token && token->type != TOKEN_IDENTIFIER) 
-        return init_error("error: expected identifier", token->line, token->column);
+        return parser_error(prs, "expected identifier after 'func'", token);
 
     name = strdup(token->value);
 
     // func ID ( 
     token = parser_advance(prs); 
     if (token && token->type != TOKEN_L_PAREN)
-        return NULL;
+        return parser_error(prs, "expected '(' after function name", token);
 
     token = parser_peek(prs);
     if (token && token->type == TOKEN_IDENTIFIER)
     {
         params = parse_parameter_list(prs);
         if (params == NULL)
-            return NULL;
+            return parser_error(prs, "error parsing parameter list", parser_peek(prs));
     }
 
     // func ID ( params ) 
     token = parser_advance(prs);    
     if (token && token->type != TOKEN_R_PAREN) 
-        return NULL;
+        return parser_error(prs, "expected ')' after parameter list", token);
 
      // func ID ( params ) ->
     token = parser_advance(prs);
     if (token && token->type != TOKEN_OP_ARROW)
-        return NULL;
+        return parser_error(prs, "expected '->' before return type", token);
 
     // func ID ( params ) -> DATATYPE
     token = parser_advance(prs);
     if (token == NULL)
-        return NULL;
+        return parser_error(prs, "expected return type", prs->token);
 
     if (token->type != TOKEN_TYPE_I64 && token->type != TOKEN_TYPE_CHAR && token->type != TOKEN_IDENTIFIER)
-        return NULL;
+        return parser_error(prs, "expected return type (i64, char, or identifier)", token);
 
     // Build return_type string, consuming any trailing '*' for pointer types
     {
@@ -110,7 +110,7 @@ t_node     *parse_function_decl(t_parser *prs)
     // func ID ( params ) -> DATATYPE {
     token = parser_advance(prs);
     if (token && token->type != TOKEN_L_BRACE)
-        return NULL;
+        return parser_error(prs, "expected '{' to open function body", token);
 
     token = parser_peek(prs);
     if (token && is_statement_intro(token->type))
@@ -136,14 +136,14 @@ t_node     *parse_function_decl(t_parser *prs)
         }
         token = parser_peek(prs);
         if (token == NULL)
-            return NULL;
+            return parser_error(prs, "unexpected end of file in function body", prs->token);
     }
 
     // func ID ( params ) -> DATATYPE {
     //      body
     // }
     if (token && token->type != TOKEN_R_BRACE) 
-        return NULL; 
+        return parser_error(prs, "expected '}' to close function body", token);
 
 
     node = new_func_decl(name, params, return_type, body_head);
@@ -181,11 +181,7 @@ t_node     *parser(t_lexer *lx)
         {
             parsed = parse_function_decl(prs);
             if (parsed == NULL || parsed->type == NODE_ERROR)
-            {
-                traverse = search_for_recovery(prs);
-                if (traverse)
-                    printf("recovery is %s\n", traverse->value);
-            }
+                search_for_recovery(prs);
             else
             {
                 parsed->next = NULL;
@@ -230,5 +226,11 @@ t_node     *parser(t_lexer *lx)
 
     program->data.program.function_decl = func_head;
     program->data.program.struct_decl   = struct_head;
+
+    if (prs->errors && prs->errors->count > 0)
+    {
+        print_parse_errors(prs);
+        return NULL;
+    }
     return program;
 }

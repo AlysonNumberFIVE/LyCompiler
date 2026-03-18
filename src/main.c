@@ -24,6 +24,8 @@ int main(int argc, char **argv)
     t_lexer *lex = lex_files(files);
 
     t_node *ast = parser(lex);
+    if (ast == NULL)
+        return 1;
     print_ast(ast, 0);
 
     return 0;   

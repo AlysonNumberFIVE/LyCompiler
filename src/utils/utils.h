@@ -19,7 +19,9 @@ bool            is_literal(token_type type);
 void            print_files(t_sourcefile *files);
 void            free_files(t_sourcefile *files);
 bool            push_file(t_sourcefile **head, char *path, char *buffer, size_t buffer_size);
+t_error_control *init_error_control(void);
 bool            push_error(t_error_control *error, char *line_message, char *code_block, int line, int column);
+void            print_errors(t_error_control *errors);
 
 t_sourcefile    *parse_cmd(int argc, char **argv);
 void            scan_token(t_lexer *lx, char *buffer, size_t length);

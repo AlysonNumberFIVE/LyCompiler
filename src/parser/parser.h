@@ -29,6 +29,8 @@ t_node          *parse_var_assign(t_parser *prs);
 t_node          *init_error(char *message, int line, int column);
 
 t_token         *search_for_recovery(t_parser *prs);
+t_node          *parser_error(t_parser *prs, char *message, t_token *token);
+void            print_parse_errors(t_parser *prs);
 t_node          *parse_var_decl(t_parser *prs);
 t_node          *parse_statement_scope(t_parser *prs);
 bool            is_statement_scope(token_type type);
