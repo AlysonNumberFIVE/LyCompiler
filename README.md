@@ -4,7 +4,7 @@ A compiler for an educational system programming language called **L** (not to b
 
 It was initially called LanguageLy (because a lot of derivative garbage has -ly at the end of a noun). This language is _purely_ for educational purposes and isn't to be treated as a production programming language — but having said that, it's written as if it were, because the goal is to learn real-world practical compiler engineering.
 
-![DEATH_NOTE_L_wallpaper](https://github.com/user-attachments/assets/358c9e10-232f-4280-b703-08ed3f746294)
+
 
 ---
 
