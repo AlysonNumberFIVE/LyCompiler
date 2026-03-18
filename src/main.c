@@ -3,6 +3,7 @@
 #include "../inc/compiler.h"
 #include "utils/utils.h"
 #include "utils/types.h"
+#include "parser/parser.h"
 
 int main(int argc, char **argv)
 {
@@ -21,10 +22,9 @@ int main(int argc, char **argv)
     }
 
     t_lexer *lex = lex_files(files);
-    
-   //  print_tokens(lex->head);
 
-    parser(lex);
+    t_node *ast = parser(lex);
+    print_ast(ast, 0);
 
     return 0;   
 }

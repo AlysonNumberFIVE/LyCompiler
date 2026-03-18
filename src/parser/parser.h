@@ -32,6 +32,8 @@ t_token         *search_for_recovery(t_parser *prs);
 t_node          *parse_var_decl(t_parser *prs);
 t_node          *parse_statement_scope(t_parser *prs);
 bool            is_statement_scope(token_type type);
+t_node          *parse_array(t_parser *prs);
+t_node          *parse_struct_init(t_parser *prs);
 
 #endif 
 

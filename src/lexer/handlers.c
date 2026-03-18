@@ -52,7 +52,7 @@ void    push_identifier(t_lexer *lx, char *token)
     else if (strcmp(token, "continue") == 0)
         push_token(lx, TOKEN_KW_CONTINUE, token, lx->line, lx->column);
     else if (strcmp(token, "break") == 0)
-        push_token(lx, TOKEN_KW_CONTINUE, token, lx->line, lx->column);
+        push_token(lx, TOKEN_KW_BREAK, token, lx->line, lx->column);
     else if (strcmp(token, "is") == 0)
         push_token(lx, TOKEN_KW_IF, token, lx->line, lx->column);   
     else
@@ -204,6 +204,7 @@ void scan_token(t_lexer *lx, char *buffer, size_t length)
         case '*': push_token(lx, TOKEN_OP_STAR, "*", lx->line, lx->column); break;
         case '/': push_token(lx, TOKEN_OP_SLASH, "/", lx->line, lx->column); break;
         case ':': push_token(lx, TOKEN_COLON, ":", lx->line, lx->column); break;
+        case '@': push_token(lx, TOKEN_AT, "@", lx->line, lx->column); break;
         case '.': push_token(lx, TOKEN_OP_DOT, ".", lx->line, lx->column); break;
         case '\'': handle_chars('\'', lx, buffer, length); break;
         case '"': handle_string('"', lx, buffer, length); break;

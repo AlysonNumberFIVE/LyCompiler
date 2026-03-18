@@ -24,6 +24,8 @@ bool        is_statement_intro(token_type type)
         type == TOKEN_KW_RETURN || 
         type == TOKEN_KW_IF ||
         type == TOKEN_KW_WHILE ||
+        type == TOKEN_KW_BREAK ||
+        type == TOKEN_KW_CONTINUE ||
         type == TOKEN_IDENTIFIER);
 }
 
@@ -81,11 +83,29 @@ t_node     *parse_function_decl(t_parser *prs)
     token = parser_advance(prs);
     if (token == NULL)
         return NULL;
-    
-    if (token->type != TOKEN_TYPE_I64 && token->type != TOKEN_TYPE_CHAR)
+
+    if (token->type != TOKEN_TYPE_I64 && token->type != TOKEN_TYPE_CHAR && token->type != TOKEN_IDENTIFIER)
         return NULL;
 
-    return_type = strdup(token->value);
+    // Build return_type string, consuming any trailing '*' for pointer types
+    {
+        char    *base = token->value;
+        size_t  base_len = strlen(base);
+        int     ptr_level = 0;
+
+        while (parser_peek(prs) && parser_peek(prs)->type == TOKEN_OP_STAR)
+        {
+            parser_advance(prs);
+            ptr_level++;
+        }
+        return_type = malloc(base_len + ptr_level + 1);
+        if (return_type == NULL)
+            return NULL;
+        strcpy(return_type, base);
+        for (int i = 0; i < ptr_level; i++)
+            return_type[base_len + i] = '*';
+        return_type[base_len + ptr_level] = '\0';
+    }
 
     // func ID ( params ) -> DATATYPE {
     token = parser_advance(prs);
@@ -128,16 +148,7 @@ t_node     *parse_function_decl(t_parser *prs)
 
     node = new_func_decl(name, params, return_type, body_head);
 
-    token = parser_peek(prs);
-    if (token == NULL)
-        return NULL;
-
-    printf("token is func %s\n", token->value);
-    if (token->type != TOKEN_R_BRACE)
-        return NULL;
-
-    token = parser_advance(prs);
-
+    parser_advance(prs); // consume '}' — already verified above
     return node;
 }
 
@@ -145,53 +156,79 @@ t_node     *parse_function_decl(t_parser *prs)
 t_node     *parser(t_lexer *lx)
 {
     t_parser    *prs;
-  //  t_node      *node;
-    t_node      *functions;
-    t_node      *structs;
- //   t_node      *variables; // global variables;
+    t_node      *program;
+    t_node      *parsed;
+    t_node      *func_head;
+    t_node      *func_tail;
+    t_node      *struct_head;
+    t_node      *struct_tail;
     t_token     *traverse;
+
+    func_head   = NULL;
+    func_tail   = NULL;
+    struct_head = NULL;
+    struct_tail = NULL;
+
+    program = init_program();
+    if (program == NULL)
+        return NULL;
 
     prs = init_parser(lx->head);
     while (prs->token)
     {
         traverse = parser_peek(prs);
-        // Global level tokens
         if (traverse->type == TOKEN_KW_FUNC)
-        {   
-        
-            functions = parse_function_decl(prs);
-            if (functions->type == NODE_ERROR)
+        {
+            parsed = parse_function_decl(prs);
+            if (parsed == NULL || parsed->type == NODE_ERROR)
             {
                 traverse = search_for_recovery(prs);
-                printf("recovery is %s\n", traverse->value);
+                if (traverse)
+                    printf("recovery is %s\n", traverse->value);
             }
             else
             {
-                printf("function parsed\n");
+                parsed->next = NULL;
+                if (func_head == NULL)
+                {
+                    func_head = parsed;
+                    func_tail = parsed;
+                }
+                else
+                {
+                    func_tail->next = parsed;
+                    func_tail = parsed;
+                }
             }
         }
         else if (traverse->type == TOKEN_KW_STRUCT)
         {
-            structs = parse_struct(prs);
-            if (structs == NULL)
-                break ;
-            
-            printf("Struct : %s\n", parser_peek(prs)->value);
-        
-        } 
-        else if (traverse->type == TOKEN_KW_VAR) 
+            parsed = parse_struct(prs);
+            if (parsed == NULL)
+                break;
+            parsed->next = NULL;
+            if (struct_head == NULL)
+            {
+                struct_head = parsed;
+                struct_tail = parsed;
+            }
+            else
+            {
+                struct_tail->next = parsed;
+                struct_tail = parsed;
+            }
+        }
+        else if (traverse->type == TOKEN_KW_VAR)
         {
-            printf("variable assign\n");
             parse_var_decl(prs);
-
-        } 
-        else 
+        }
+        else
         {
-            break ;
-        } 
-    }    
+            break;
+        }
+    }
 
-    print_ast(functions, 1);
-    print_ast(structs, 1);
-    return NULL;
+    program->data.program.function_decl = func_head;
+    program->data.program.struct_decl   = struct_head;
+    return program;
 }

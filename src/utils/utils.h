@@ -35,6 +35,7 @@ char            *charpush(char *str, char c);
 // Parser =====================================================
 
 t_node           *init_node(void);
+t_node          *init_program(void);
 t_node          *new_struct_decl(char *name, t_node *members);
 t_node          *new_struct_member(char *name, t_node *type_node);
 t_node          *new_func_decl(char *name, t_node *params, char *return_type, t_node *body);

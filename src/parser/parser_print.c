@@ -7,16 +7,22 @@
 void print_ast(t_node *node, int depth) {
     if (!node) return;
 
-   //  if (node->type != NODE_TYPE_SPEC) {
         // 1. Print indentation
         for (int i = 0; i < depth; i++) {
             printf("  │ ");
         }
-  //  }
     printf("  ├── ");
 
     // 2. Handle each node type
     switch (node->type) {
+        case NODE_PROGRAM:
+            printf("PROGRAM\n");
+            if (node->data.program.struct_decl)
+                print_ast(node->data.program.struct_decl, depth + 1);
+            if (node->data.program.function_decl)
+                print_ast(node->data.program.function_decl, depth + 1);
+            return; // NODE_PROGRAM is the root — do not follow ->next
+
         case NODE_BINARY_EXPR:
             printf("BINARY_EXPR (%s)\n", node->data.binary_expr.op);
             print_ast(node->data.binary_expr.left, depth + 1);
@@ -41,10 +47,8 @@ void print_ast(t_node *node, int depth) {
 
         case NODE_VAR_DECL:
             printf("VAR_DECL: %s\n", node->data.var_decl.name);
-            if (node->data.var_decl.type) {
-                printf("  │ "); // Extra visual for type
+            if (node->data.var_decl.type)
                 print_ast(node->data.var_decl.type, depth + 1);
-            }
             if (node->data.var_decl.initializer)
                 print_ast(node->data.var_decl.initializer, depth + 1);
             break;
@@ -75,42 +79,20 @@ void print_ast(t_node *node, int depth) {
 
         case NODE_ARRAY_ACCESS:
             printf("ARRAY_ACCESS\n");
-            // Print the array base
-            for (int i = 0; i < depth + 1; i++) printf("  │ ");
-            printf("  ├── Base:\n");
-            print_ast(node->data.array_access.array, depth + 2);
-
-            // Print the index expression
-            for (int i = 0; i < depth + 1; i++) printf("  │ ");
-            printf("  ├── Index:\n");
-            print_ast(node->data.array_access.index, depth + 2);
+            print_ast(node->data.array_access.array, depth + 1);
+            print_ast(node->data.array_access.index, depth + 1);
             break;
-            // Add more cases here as you implement them...
 
         case NODE_MEMEBER_ACCESS:
-            // 1. Print the type of access
-            printf("MEMBER_ACCESS (%s)\n", node->data.member_access.is_arrow ? "->" : ".");
-
-            // 2. Print the struct/pointer (The "Left" side)
-            for (int i = 0; i < depth; i++) printf("  │ ");
-            printf("  ├── Struct:\n");
-            print_ast(node->data.member_access.struct_expr, depth + 2);
-
-            // 3. Print the member name (The "Right" side)
-            for (int i = 0; i < depth; i++) printf("  │ ");
-            printf("  └── Member: %s\n", node->data.member_access.member_name);
+            printf("MEMBER_ACCESS (%s) .%s\n",
+                    node->data.member_access.is_arrow ? "->" : ".",
+                    node->data.member_access.member_name);
+            print_ast(node->data.member_access.struct_expr, depth + 1);
             break;
         case NODE_PARAM:
             printf("PARAM: %s\n", node->data.param.name);
-            
-            // 1. Print the Type Node
-            for (int i = 0; i < depth; i++) printf("  │ ");
-            printf("  ├── Type: "); 
-            // We pass depth + 1 so the TYPE_SPEC knows how far to indent if needed
-            // (Though here we print TYPE_SPEC on the same line or right after)
-            print_ast(node->data.param.type, depth + 2);
-
- 
+            if (node->data.param.type)
+                print_ast(node->data.param.type, depth + 1);
             break;
         case NODE_TYPE_SPEC:
             printf("TYPE_SPEC: %s", node->data.type_spec.base_type);
@@ -124,33 +106,19 @@ void print_ast(t_node *node, int depth) {
             break;
 
         case NODE_CALL:
+        {
+            if (node->data.call.callee &&
+                    node->data.call.callee->type == NODE_IDENTIFIER)
+                printf("CALL: %s\n", node->data.call.callee->data.identifier.name);
+            else
             {
-                // 1. Print the Callee
-                // This is a node, so we call print_node recursively on it.
-                // It might be an identifier (like 'foo') or a complex expression.
-                print_ast(node->data.call.callee, depth);
-
-                printf("(");
-
-                // 2. Print the Arguments (Linked List)
-                t_node *curr_arg = node->data.call.args;
-                while (curr_arg)
-                {
-                    // Print the argument expression (don't add depth/indent here)
-                    print_ast(curr_arg, 0);
-
-                    // Your struct has 'struct s_node *next', 
-                    // so we check it to see if we need a comma.
-                    if (curr_arg->next)
-                        printf(", ");
-                
-                    curr_arg = curr_arg->next;
-                }
-
-                printf(")");
-                // Note: No semicolon here, usually the expr_stmt or func body handles that.
-                break;
+                printf("CALL\n");
+                print_ast(node->data.call.callee, depth + 1);
             }
+            if (node->data.call.args)
+                print_ast(node->data.call.args, depth + 1);
+            break;
+        }
         case NODE_WHILE_STMT:
                 printf("WHILE_STMT\n");
                 print_ast(node->data.while_stmt.condition, depth + 1);
@@ -159,28 +127,61 @@ void print_ast(t_node *node, int depth) {
                     print_ast(node->data.while_stmt.body, depth + 1);
                 }
                 break;
+        case NODE_BREAK_STMT:
+                printf("BREAK_STMT\n");
+                break;
+        case NODE_CONTINUE_STMT:
+                printf("CONTINUE_STMT\n");
+                break;
+        case NODE_EXPR_STMT:
+                printf("EXPR_STMT\n");
+                print_ast(node->data.expr_stmt.expression, depth + 1);
+                break;
         case NODE_RETURN_STMT:
             printf("RETURN_STMT\n");
-            print_ast(node->data.return_stmt.expression, depth + 1);
-
+            print_ast(node->data.expr_stmt.expression, depth + 1);
+            break;
         case NODE_ARRAY:
-            printf("NODE_ARRAY\n");
+        {
             t_node *array = node->data.array.items;
-                print_ast(array, depth + 1);
-           //     array = array->next;
-        case NODE_STRUCT_DECL: 
-            printf("NODE_STRUCT_DECL\n");
-            printf("Struct: %s\n", node->data.struct_decl.name); 
-            printf("    | Members:\n");
+            printf("NODE_ARRAY\n");
+            print_ast(array, depth + 1);
+            break;
+        }
+        case NODE_STRUCT_INIT:
+        {
+            t_node *field = node->data.struct_initializer.fields;
+            printf("STRUCT_INIT: %s\n", node->data.struct_initializer.struct_name);
+            while (field)
+            {
+                for (int i = 0; i < depth + 1; i++) printf("  │ ");
+                printf("  ├── FIELD: %s\n", field->data.init_field.name);
+                print_ast(field->data.init_field.value, depth + 2);
+                field = field->next;
+            }
+            break;
+        }
+        case NODE_STRUCT_FIELD:
+            printf("STRUCT_FIELD: %s\n", node->data.init_field.name);
+            print_ast(node->data.init_field.value, depth + 1);
+            break;
+        case NODE_STRUCT_DECL:
+        {
             t_node *parameter = node->data.struct_decl.members;
+            printf("STRUCT_DECL: %s\n", node->data.struct_decl.name);
             while (parameter)
             {
-                for (int i = 0; i < depth; i++) 
-                    printf("  ");
-                printf("-> name: %s, type: %s\n", parameter->data.param.name, parameter->data.param.type->data.type_spec.base_type);
+                t_node *type_node = parameter->data.param.type;
+                for (int i = 0; i < depth + 1; i++) printf("  │ ");
+                printf("  ├── MEMBER: %s ", parameter->data.param.name);
+                printf("%s", type_node->data.type_spec.base_type);
+                for (int j = 0; j < type_node->data.type_spec.pointer_level; j++)
+                    printf("*");
+                printf("\n");
                 parameter = parameter->next;
             }
-
+            break;
+        }
         default:
             printf("UNKNOWN_NODE_TYPE (%d)\n", node->type);
             break;

@@ -23,6 +23,8 @@ SHARED_SRCS  := utils/utils_error.c \
 				parser/parse_if_statement.c \
 				parser/parse_while_statement.c \
 				parser/parse_return_statement.c \
+				parser/parse_break_statement.c \
+				parser/parse_continue_statement.c \
 				parser/parse_struct.c \
 				parser/errors.c
            

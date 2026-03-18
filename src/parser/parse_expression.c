@@ -34,7 +34,6 @@ t_node  *parse_literal(t_parser *prs)
     long        integer;
     char        *strlol_ptr;
 
-    printf("here it is parse_literal %s\n", parser_peek(prs)->value);
     token = parser_advance(prs);
     if (token == NULL)
         return NULL;
@@ -104,7 +103,6 @@ t_node  *parse_primary(t_parser *prs)
 
         if (token->type == TOKEN_L_PAREN)
         {
-            printf("BEOFRE FUNCTION CALL %s\n", parser_peek(prs)->value);
             left = parse_func_call(prs);
         }        
         else 
@@ -112,19 +110,20 @@ t_node  *parse_primary(t_parser *prs)
             token = parser_peek(prs);
             if (token == NULL)
                 return NULL; 
-            printf("regular token is %s\n", token->value);
             left = new_identifier(token->value);
 
             token = parser_advance(prs);
-            printf("regular token is next %s\n", token->value);
             if (token == NULL)
                 return NULL;   
         }
     }
+    else if (token->type == TOKEN_L_BLOCK)
+        left = parse_array(prs);
+    else if (token->type == TOKEN_AT)
+        left = parse_struct_init(prs);
     else 
         return NULL;
     
-    printf("============= after parse_primary ============== %s %dd\n", parser_peek(prs)->value, parser_peek(prs)->line);
     return left;
 }
 
@@ -165,6 +164,7 @@ t_node *parse_postfix(t_parser *prs)
         }
         else if (token->type == TOKEN_L_BLOCK)
         {
+            parser_advance(prs); // consume '['
             index = parse_assignment(prs); // Expressions are allowed in []
             
             if (parser_peek(prs) && parser_peek(prs)->type == TOKEN_R_BLOCK)
@@ -331,12 +331,11 @@ t_node  *parse_logical_or(t_parser *prs)
     t_node      *right;
     char        *op;
 
-    printf("token in logical_or is |||| %s\n", parser_peek(prs)->value);
     left = parse_logical_and(prs);
     while (42) 
     {
         token = parser_peek(prs);     
-        if (token == NULL || token->type != TOKEN_OP_AND)
+        if (token == NULL || token->type != TOKEN_OP_OR)
             break ;
 
         token = parser_advance(prs);
@@ -357,6 +356,120 @@ t_node  *parse_logical_or(t_parser *prs)
     return left;
 }
 
+t_node  *parse_assignment(t_parser *prs)
+{
+    t_token *token;
+    t_node  *left;
+    t_node  *value;
+
+    left = parse_logical_or(prs);
+    if (left == NULL)
+        return NULL;
+
+    token = parser_peek(prs);
+    if (token != NULL && token->type == TOKEN_OP_ASSIGN)
+    {
+        parser_advance(prs); // consume '='
+        value = parse_assignment(prs);
+        if (value == NULL)
+            return NULL;
+        return new_assignment(left, value);
+    }
+    return left;
+}
+
+t_node      *parse_struct_init(t_parser *prs)
+{
+    t_token *token;
+    t_node  *node;
+    t_node  *field;
+    t_node  *field_head;
+    t_node  *field_list;
+    char    *struct_name;
+    char    *field_name;
+    t_node  *field_value;
+
+    // consume '@'
+    token = parser_advance(prs);
+    if (token == NULL || token->type != TOKEN_AT)
+        return NULL;
+
+    // consume struct name
+    token = parser_advance(prs);
+    if (token == NULL || token->type != TOKEN_IDENTIFIER)
+        return NULL;
+    struct_name = strdup(token->value);
+
+    // consume '{'
+    token = parser_advance(prs);
+    if (token == NULL || token->type != TOKEN_L_BRACE)
+    {
+        free(struct_name);
+        return NULL;
+    }
+
+    field_head = NULL;
+    field_list = NULL;
+    while (parser_peek(prs) && parser_peek(prs)->type != TOKEN_R_BRACE)
+    {
+        // field name (IDENTIFIER)
+        token = parser_advance(prs);
+        if (token == NULL || token->type != TOKEN_IDENTIFIER)
+        {
+            free(struct_name);
+            return NULL;
+        }
+        field_name = strdup(token->value);
+
+        // ':'
+        token = parser_advance(prs);
+        if (token == NULL || token->type != TOKEN_COLON)
+        {
+            free(struct_name);
+            free(field_name);
+            return NULL;
+        }
+
+        // value expression
+        field_value = parse_logical_or(prs);
+        if (field_value == NULL)
+        {
+            free(struct_name);
+            free(field_name);
+            return NULL;
+        }
+
+        field = new_struct_field(field_name, field_value);
+        free(field_name);
+        if (field_head == NULL)
+        {
+            field_head = field;
+            field_list = field_head;
+        }
+        else
+        {
+            field_list->next = field;
+            field_list = field_list->next;
+        }
+
+        // optional ','
+        if (parser_peek(prs) && parser_peek(prs)->type == TOKEN_COMMA)
+            parser_advance(prs);
+    }
+
+    // consume '}'
+    token = parser_advance(prs);
+    if (token == NULL || token->type != TOKEN_R_BRACE)
+    {
+        free(struct_name);
+        return NULL;
+    }
+
+    node = new_struct_initializer(struct_name, field_head);
+    free(struct_name);
+    return node;
+}
+
 t_node      *parse_array(t_parser *prs)
 {
     t_token *token;
@@ -365,84 +478,45 @@ t_node      *parse_array(t_parser *prs)
     t_node  *item_list;
     t_node  *item_head;
 
+    // consume '['
     token = parser_advance(prs);
-    if (token == NULL)
+    if (token == NULL || token->type != TOKEN_L_BLOCK)
         return NULL;
 
-    if (token->type != TOKEN_L_BLOCK)
-        return NULL;
+    item_head = NULL;
+    item_list = NULL;
 
-    token = parser_advance(prs);
-    if (token == NULL)
-        return NULL;
-
-    item = parse_logical_or(prs);
-
-
+    // handle empty array []
     token = parser_peek(prs);
-    if (token == NULL)
-        return NULL; 
-
-    if (token->type == TOKEN_COMMA) 
+    if (token != NULL && token->type == TOKEN_R_BLOCK)
     {
-        item_list = NULL;
-        item_head = NULL;
-        while (token && token->type != TOKEN_R_BLOCK)
-        {
-            token = parser_advance(prs);
-            if (token == NULL)
-                return NULL; 
-            
-            item = parse_logical_or(prs);
-
-            if (item_head == NULL)
-            {
-                item_head = item;
-                item_list = item_head;
-            }
-            else
-            {
-                item_list->next = item;
-                item_list = item_list->next;
-            }
-
-            token = parser_peek(prs);
-            if (token == NULL)
-                return NULL; 
-
-        }
+        parser_advance(prs);
+        return new_array(NULL);
     }
-    else if (token->type != TOKEN_R_BLOCK)
+
+    // parse first item
+    item = parse_logical_or(prs);
+    if (item == NULL)
         return NULL;
+    item_head = item;
+    item_list = item_head;
 
-    token = parser_peek(prs);
-    if (token == NULL)
-        return NULL;  
-    
-    printf("tokne vlue is %s\n", token->value);
-    node = new_array(item_head);
-    if (node == NULL)
-        return NULL;
+    // parse remaining comma-separated items
+    while (parser_peek(prs) && parser_peek(prs)->type == TOKEN_COMMA)
+    {
+        parser_advance(prs); // consume ','
+        item = parse_logical_or(prs);
+        if (item == NULL)
+            return NULL;
+        item_list->next = item;
+        item_list = item_list->next;
+    }
 
-    return node; 
-}
-
-// <assignment>            ::= <logical_or>
-t_node  *parse_assignment(t_parser *prs)
-{
-    t_token     *token;
-    t_node      *node;
-
+    // consume ']'
     token = parser_advance(prs);
-    if (token == NULL)
+    if (token == NULL || token->type != TOKEN_R_BLOCK)
         return NULL;
 
-    printf("token parse_assignment is %s\n", token->value);
-    node = parse_logical_or(prs);
-    printf("binary_expr: \n");
-    print_ast(node  , 1);
-    printf("======================\n");
-
-
+    node = new_array(item_head);
     return node;
 }

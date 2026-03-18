@@ -51,7 +51,6 @@ t_node  *parse_var_decl(t_parser *prs)
     if (!token) 
         return NULL;
 
-    printf("var_decl token is %s\n", token->value);
     if (token->type != TOKEN_KW_VAR) 
         return NULL;
     
@@ -77,6 +76,7 @@ t_node  *parse_var_decl(t_parser *prs)
     
     if (token->type == TOKEN_OP_ASSIGN) 
     {
+        parser_advance(prs); // consume '='
         initializer = parse_assignment(prs);
     } 
 
@@ -93,7 +93,7 @@ t_node  *parse_var_decl(t_parser *prs)
     }
     else 
     {
-        printf("error\n");
+        // semicolon expected but missing — continue anyway
     }
 
     return node;
@@ -108,7 +108,6 @@ t_node  *parse_var_assign(t_parser *prs)
     node = parse_logical_or(prs);
 
     token = parser_peek(prs);
-    printf("parser_var_asign %s\n", token->value);
     
     if (!token)
         return NULL;
@@ -138,11 +137,9 @@ t_node  *parse_statement_scope(t_parser *prs)
     if (token->type == TOKEN_KW_IF) 
     {
         node = parse_if_statement(prs);
-        printf("exit if\n");
     }
     else if (token->type == TOKEN_KW_WHILE) 
     {
-        printf("while stmt\n");
         node = parse_while_stmt(prs);
     }
 
@@ -153,38 +150,53 @@ t_node  *parse_statement_scope(t_parser *prs)
 //                     | <return_stmt>      DONE
 //                     | <if_stmt>          DONE
 //                     | <while_stmt>       DONE 
-//                     | <expr_stmt>        
+//                     | <expr_stmt>        DONE
 //                     | <break_stmt>       DONE
 //                     | <continue_stmt>    DONE
 //                     | <function_call>    DONE
 t_node  *parse_statement(t_parser *prs)
 {
     t_token *token;
-    t_node *node;
+    t_node  *node;
 
     node = NULL;
     token = parser_peek(prs);
     if (token == NULL)
-        return (NULL);
+        return NULL;
 
-    printf("token type KW _________ %s\n", token->value);
+    token = parser_peek(prs);
+    if (token == NULL)
+        return NULL;
+
     if (token->type == TOKEN_KW_VAR) 
     {
         node = parse_var_decl(prs);      
-        printf("parse_var_decl AFTER %s\n", parser_peek(prs)->value);
     }
-    else if (token->type == TOKEN_IDENTIFIER || is_literal(token->type)) 
-    {  
-        printf("LOGICAL\n");
-        node = parse_var_assign(prs);
-        parser_advance(prs);
+    else if (token->type == TOKEN_KW_RETURN)
+    {
+        node = parse_return_stmt(prs);
+    }
+    else if (token->type == TOKEN_KW_BREAK)
+    {
+        node = parse_break_stmt(prs);
+    }
+    else if (token->type == TOKEN_KW_CONTINUE)
+    {
+        node = parse_continue_stmt(prs);
     }
     else if (token->type == TOKEN_KW_IF || token->type == TOKEN_KW_WHILE) 
     {
         node = parse_statement_scope(prs);
     }
-   
-    printf("BEFORE EXITING PARSE_STATEMENT %s %d\n", parser_peek(prs)->value, parser_peek(prs)->line);
+    else if (token->type == TOKEN_IDENTIFIER || is_literal(token->type)) 
+    {  
+        node = new_expr_stmt(parse_assignment(prs));
+        token = parser_peek(prs);
+        if (token != NULL && token->type == TOKEN_SEMICOLON)
+            parser_advance(prs);
+    }
+
+    token = parser_peek(prs);
     return node;
 }
 
