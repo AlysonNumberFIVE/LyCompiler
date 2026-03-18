@@ -167,7 +167,7 @@ if (condition) {
 }
 ```
 
-The condition is wrapped in `( )`. Both `else if` chaining and a bare `else` block are supported.
+The condition is wrapped in `( )`. Both `else if` chaining and a plain `else` block are supported.
 
 #### while
 
