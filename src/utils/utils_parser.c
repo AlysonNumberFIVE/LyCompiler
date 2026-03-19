@@ -25,9 +25,10 @@ t_token  *parser_lookahead(t_parser *prs)
 
 t_token *parser_advance(t_parser *prs) 
 {
-    if (prs && prs->token && prs->token->next)
+    if (prs && prs->token)
     {
         t_token *token;
+
         token = prs->token;
         prs->token = prs->token->next;
         return token;

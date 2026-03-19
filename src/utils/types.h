@@ -53,7 +53,8 @@ typedef enum {
     TOKEN_INT_LITERAL,
     TOKEN_STRING_LITERAL,
     TOKEN_CHAR_LITERAL,
-    TOKEN_AT
+    TOKEN_AT,
+    TOKEN_EOF
 }           token_type;
 
 typedef struct s_token 

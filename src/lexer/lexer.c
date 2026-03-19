@@ -138,7 +138,7 @@ t_lexer *lex_files(t_sourcefile *files)
 
         free(lx->file_path);
     }
-    lx->tail->next = NULL;
+    push_token(lx, TOKEN_EOF, "EOF", lx->line, lx->column);
     return lx;
 }
 

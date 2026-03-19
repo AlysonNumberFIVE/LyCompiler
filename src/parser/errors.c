@@ -8,7 +8,7 @@
 // function does not halt mid-way at a 'return' or 'if' keyword.
 static bool recovery_tokens(token_type type)
 {
-    return (type == TOKEN_KW_FUNC || type == TOKEN_KW_STRUCT);
+    return (type == TOKEN_KW_FUNC || type == TOKEN_KW_STRUCT || type == TOKEN_EOF);
 }
 
 t_token    *search_for_recovery(t_parser *prs)

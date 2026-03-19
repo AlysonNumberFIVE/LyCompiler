@@ -46,19 +46,25 @@ t_node     *parse_function_decl(t_parser *prs)
 
     // func 
     token = parser_advance(prs);
-    if (token && token->type != TOKEN_KW_FUNC)
-        return NULL;    
+    if (token == NULL)
+        return parser_error(prs, "expected 'func'", prs->token);
+    if (token->type != TOKEN_KW_FUNC)
+        return parser_error(prs, "expected 'func'", token);
 
     // func ID
     token = parser_advance(prs);
-    if (token && token->type != TOKEN_IDENTIFIER) 
+    if (token == NULL)
+        return parser_error(prs, "expected identifier after 'func'", prs->token);
+    if (token->type != TOKEN_IDENTIFIER) 
         return parser_error(prs, "expected identifier after 'func'", token);
 
     name = strdup(token->value);
 
     // func ID ( 
     token = parser_advance(prs); 
-    if (token && token->type != TOKEN_L_PAREN)
+    if (token == NULL)
+        return parser_error(prs, "expected '(' after function name", prs->token);
+    if (token->type != TOKEN_L_PAREN)
         return parser_error(prs, "expected '(' after function name", token);
 
     token = parser_peek(prs);
@@ -71,12 +77,16 @@ t_node     *parse_function_decl(t_parser *prs)
 
     // func ID ( params ) 
     token = parser_advance(prs);    
-    if (token && token->type != TOKEN_R_PAREN) 
+    if (token == NULL)
+        return parser_error(prs, "expected ')' after parameter list", prs->token);
+    if (token->type != TOKEN_R_PAREN) 
         return parser_error(prs, "expected ')' after parameter list", token);
 
      // func ID ( params ) ->
     token = parser_advance(prs);
-    if (token && token->type != TOKEN_OP_ARROW)
+    if (token == NULL)
+        return parser_error(prs, "expected '->' before return type", prs->token);
+    if (token->type != TOKEN_OP_ARROW)
         return parser_error(prs, "expected '->' before return type", token);
 
     // func ID ( params ) -> DATATYPE
@@ -102,6 +112,7 @@ t_node     *parse_function_decl(t_parser *prs)
         if (return_type == NULL)
             return NULL;
         strcpy(return_type, base);
+        
         for (int i = 0; i < ptr_level; i++)
             return_type[base_len + i] = '*';
         return_type[base_len + ptr_level] = '\0';
@@ -109,7 +120,9 @@ t_node     *parse_function_decl(t_parser *prs)
 
     // func ID ( params ) -> DATATYPE {
     token = parser_advance(prs);
-    if (token && token->type != TOKEN_L_BRACE)
+    if (token == NULL)
+        return parser_error(prs, "expected '{' to open function body", prs->token);
+    if (token->type != TOKEN_L_BRACE)
         return parser_error(prs, "expected '{' to open function body", token);
 
     token = parser_peek(prs);
@@ -142,7 +155,9 @@ t_node     *parse_function_decl(t_parser *prs)
     // func ID ( params ) -> DATATYPE {
     //      body
     // }
-    if (token && token->type != TOKEN_R_BRACE) 
+    if (token == NULL)
+        return parser_error(prs, "expected '}' to close function body", prs->token);
+    if (token->type != TOKEN_R_BRACE) 
         return parser_error(prs, "expected '}' to close function body", token);
 
 
@@ -177,6 +192,8 @@ t_node     *parser(t_lexer *lx)
     while (prs->token)
     {
         traverse = parser_peek(prs);
+        if (traverse->type == TOKEN_EOF)
+            break;
         if (traverse->type == TOKEN_KW_FUNC)
         {
             parsed = parse_function_decl(prs);

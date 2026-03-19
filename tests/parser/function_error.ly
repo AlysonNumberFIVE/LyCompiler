@@ -1,1 +1,2 @@
-func variable(void)
+func variable() -> i64 {
+	func 
