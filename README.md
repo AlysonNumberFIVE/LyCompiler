@@ -37,7 +37,7 @@ Concepts like classes, interfaces, and multiple return values don't exist at the
 In C, parsing a function signature like:
 
 ```c
-unsigned char *function(unsigned int i, unsigned long long j)
+unsigned char *hello_world(unsigned int i, unsigned long long j)
 ```
 
 requires consuming `unsigned`, then looking ahead to determine if the type is `char`, `int`, or `long` (and if it is `long`, looking ahead again to check for `long long`), then consuming the `*`, finding the function name, and then checking whether this is a declaration or an assignment. That is a lot of lookahead and branching just to figure out the return type.
@@ -74,7 +74,7 @@ Pointer depth is expressed by stacking `*` characters — `Item**` is a pointer 
 ### Function Definitions
 
 ```
-func function_name(param1 Type, param2 Type*) -> ReturnType {
+func hello_world(param1 Type, param2 Type*) -> ReturnType {
     ...
 }
 ```
