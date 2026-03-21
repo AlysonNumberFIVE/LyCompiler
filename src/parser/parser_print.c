@@ -19,6 +19,8 @@ void print_ast(t_node *node, int depth) {
             printf("PROGRAM\n");
             if (node->data.program.struct_decl)
                 print_ast(node->data.program.struct_decl, depth + 1);
+            if (node->data.program.var_decl)
+                print_ast(node->data.program.var_decl, depth + 1);
             if (node->data.program.function_decl)
                 print_ast(node->data.program.function_decl, depth + 1);
             return; // NODE_PROGRAM is the root — do not follow ->next

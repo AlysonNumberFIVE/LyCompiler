@@ -177,12 +177,16 @@ t_node     *parser(t_lexer *lx)
     t_node      *func_tail;
     t_node      *struct_head;
     t_node      *struct_tail;
+    t_node      *var_head;
+    t_node      *var_tail;
     t_token     *traverse;
 
     func_head   = NULL;
     func_tail   = NULL;
     struct_head = NULL;
     struct_tail = NULL;
+    var_head    = NULL;
+    var_tail    = NULL;
 
     program = init_program();
     if (program == NULL)
@@ -233,7 +237,23 @@ t_node     *parser(t_lexer *lx)
         }
         else if (traverse->type == TOKEN_KW_VAR)
         {
-            parse_var_decl(prs);
+            parsed = parse_var_decl(prs);
+            if (parsed == NULL || parsed->type == NODE_ERROR)
+                search_for_recovery(prs);
+            else
+            {
+                parsed->next = NULL;
+                if (var_head == NULL)
+                {
+                    var_head = parsed;
+                    var_tail = parsed;
+                }
+                else
+                {
+                    var_tail->next = parsed;
+                    var_tail = parsed;
+                }
+            }
         }
         else
         {
@@ -243,6 +263,7 @@ t_node     *parser(t_lexer *lx)
 
     program->data.program.function_decl = func_head;
     program->data.program.struct_decl   = struct_head;
+    program->data.program.var_decl      = var_head;
 
     if (prs->errors && prs->errors->count > 0)
     {

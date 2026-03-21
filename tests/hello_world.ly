@@ -6,7 +6,7 @@ var message char* = "Hello, Compiler!";
 var newline char = '\n';
 var tab char = '\t';
 
-func print_msg(char* s) -> void {
+func print_msg(s char*) -> void {
     var first_char char*  = s;
     print(s);
 }
