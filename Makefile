@@ -46,7 +46,7 @@ PARSER_TEST_OBJS  := $(PARSER_TEST_SRCS:%.c=$(OBJ_DIR)/%.o)
 
 # Compiler and Flags
 CC           := gcc 
-CFLAGS       := -Wall -Wextra -Werror -Iinc -Isrc/utils -Isrc/lexer -Isrc/parser
+CFLAGS       := -Wall -Wextra -Werror -Iinc -Isrc/utils -Isrc/lexer -Isrc/parser -Isrc/analyser
 
 # Build Rules
 all: $(NAME)

@@ -73,8 +73,9 @@ void print_ast(t_node *node, int depth) {
             break;
 
         case NODE_FUNCTION_DECL:
-            printf("FUNC_DECL: %s (Returns: %s)\n", 
-                    node->data.func_decl.name, node->data.func_decl.return_type);
+            printf("FUNC_DECL: %s\n", node->data.func_decl.name);
+            if (node->data.func_decl.return_type)
+            print_ast(node->data.func_decl.return_type, depth + 1);
             print_ast(node->data.func_decl.params, depth + 1);
             print_ast(node->data.func_decl.body, depth + 1);
             break;

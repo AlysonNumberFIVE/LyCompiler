@@ -36,13 +36,14 @@ t_node     *parse_function_decl(t_parser *prs)
     t_node  *params;
     t_node  *body;
     t_node  *body_list;
+    t_node  *return_type;
     t_node *body_head = NULL;
     t_token *token;
     char    *name;
-    char    *return_type;
 
     body = NULL;
     params = NULL;
+    return_type = NULL;
 
     // func 
     token = parser_advance(prs);
@@ -89,34 +90,9 @@ t_node     *parse_function_decl(t_parser *prs)
     if (token->type != TOKEN_OP_ARROW)
         return parser_error(prs, "expected '->' before return type", token);
 
-    // func ID ( params ) -> DATATYPE
-    token = parser_advance(prs);
-    if (token == NULL)
-        return parser_error(prs, "expected return type", prs->token);
-
-    if (token->type != TOKEN_TYPE_I64 && token->type != TOKEN_TYPE_CHAR && token->type != TOKEN_IDENTIFIER)
-        return parser_error(prs, "expected return type (i64, char, or identifier)", token);
-
-    // Build return_type string, consuming any trailing '*' for pointer types
-    {
-        char    *base = token->value;
-        size_t  base_len = strlen(base);
-        int     ptr_level = 0;
-
-        while (parser_peek(prs) && parser_peek(prs)->type == TOKEN_OP_STAR)
-        {
-            parser_advance(prs);
-            ptr_level++;
-        }
-        return_type = malloc(base_len + ptr_level + 1);
-        if (return_type == NULL)
-            return NULL;
-        strcpy(return_type, base);
-        
-        for (int i = 0; i < ptr_level; i++)
-            return_type[base_len + i] = '*';
-        return_type[base_len + ptr_level] = '\0';
-    }
+    return_type = parse_type(prs);
+    if (return_type == NULL)
+        return parser_error(prs, "expected return type", parser_peek(prs));
 
     // func ID ( params ) -> DATATYPE {
     token = parser_advance(prs);

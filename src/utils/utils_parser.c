@@ -98,7 +98,7 @@ t_node *new_struct_member(char *name, t_node *type_node)
     return node;
 }
 
-t_node  *new_func_decl(char *name, t_node *params, char *return_type, t_node *body)
+t_node  *new_func_decl(char *name, t_node *params, t_node *return_type, t_node *body)
 {
     t_node *node; 
 
@@ -109,7 +109,7 @@ t_node  *new_func_decl(char *name, t_node *params, char *return_type, t_node *bo
     node->type = NODE_FUNCTION_DECL;
     node->data.func_decl.name = strdup(name);
     node->data.func_decl.params = params;
-    node->data.func_decl.return_type = strdup(return_type);
+    node->data.func_decl.return_type = return_type;
     node->data.func_decl.body = body;
     return node;
 }

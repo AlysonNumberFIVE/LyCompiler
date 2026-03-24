@@ -162,7 +162,7 @@ typedef struct s_node {
         struct {
             char              *name;
             struct s_node     *params;
-            char              *return_type;
+            struct s_node     *return_type;
             struct s_node     *body;
         }   func_decl;
 

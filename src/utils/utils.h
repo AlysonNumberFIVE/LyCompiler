@@ -40,7 +40,7 @@ t_node           *init_node(void);
 t_node          *init_program(void);
 t_node          *new_struct_decl(char *name, t_node *members);
 t_node          *new_struct_member(char *name, t_node *type_node);
-t_node          *new_func_decl(char *name, t_node *params, char *return_type, t_node *body);
+t_node          *new_func_decl(char *name, t_node *params, t_node *return_type, t_node *body);
 t_node          *new_param(char *name, t_node *type);
 t_node          *new_var_decl(char *name, t_node *type, t_node *initializer);
 t_node          *new_return_stmt(t_node *expression);
