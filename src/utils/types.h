@@ -17,6 +17,7 @@ typedef enum {
     TOKEN_KW_WHILE,
     
     TOKEN_TYPE_I64,
+    TOKEN_TYPE_VOID,
     TOKEN_TYPE_CHAR,
     
     TOKEN_OP_ASSIGN,

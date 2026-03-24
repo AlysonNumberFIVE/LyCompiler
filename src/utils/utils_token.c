@@ -4,7 +4,7 @@
 
 bool                is_primitive(token_type type)
 {
-    return (type == TOKEN_TYPE_I64 || type == TOKEN_TYPE_CHAR);
+    return (type == TOKEN_TYPE_I64 || type == TOKEN_TYPE_VOID || type == TOKEN_TYPE_CHAR);
 }
 
 bool                is_literal(token_type type)

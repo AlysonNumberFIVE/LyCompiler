@@ -10,6 +10,7 @@ SHARED_SRCS  := utils/utils_error.c \
                 utils/utils_file.c \
                 utils/utils_token.c \
 				utils/utils_analyser.c \
+				analyser/analyser.c \
                 utils/utils_general.c \
                 utils/utils_parser.c \
                 lexer/read_file.c \
