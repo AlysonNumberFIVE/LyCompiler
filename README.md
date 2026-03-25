@@ -374,7 +374,7 @@ The process exits with code 1. A clean parse returns the `NODE_PROGRAM` root and
 | Lexer             | Complete    |
 | Parser            | Complete    |
 | Error recovery    | Complete    |
-| Semantic analyser | Not started |
+| Semantic analyser | In Progress |
 | Code generation   | Not started |
 
 ---
